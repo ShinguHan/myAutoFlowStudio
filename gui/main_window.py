@@ -307,7 +307,6 @@ class MainWindow(QMainWindow):
                 log.error(f"Failed to load scenario: {e}")
                 QMessageBox.critical(self, "불러오기 실패", f"파일을 읽는 중 오류가 발생했습니다:\n{e}")
         
-    @pyqtSignal(str)
     def update_log_viewer(self, message):
         """로그 핸들러로부터 메시지를 받아 로그 뷰어에 추가합니다."""
         self.log_viewer.append(message)
@@ -360,4 +359,3 @@ class MainWindow(QMainWindow):
                 log.warning(f"Trigger activated, but no scenario loaded in slot #{slot_index_to_run + 1}.")
         except ValueError as e:
             log.error(f"Invalid trigger slot number: {e}")
-
