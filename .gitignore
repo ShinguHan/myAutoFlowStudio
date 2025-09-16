@@ -12,3 +12,5 @@ pycache/
 #Build artifacts
 build/
 dist/
+
+logs/

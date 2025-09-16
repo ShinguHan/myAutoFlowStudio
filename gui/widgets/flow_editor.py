@@ -135,13 +135,22 @@ class FlowEditor(QWidget):
         self.flow_tree_widget = CustomTreeWidget()
         self.flow_tree_widget.setHeaderHidden(True)
         self.flow_tree_widget.setAcceptDrops(True)
-        self.flow_tree_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+        
+        # *** ✨ 여기가 수정된 부분입니다 ✨ ***
+        # 외부 드롭(UI 요소 추가)과 내부 이동(순서 변경)을 모두 허용하도록 모드를 변경합니다.
+        self.flow_tree_widget.setDragDropMode(QAbstractItemView.DragDropMode.DragDrop)
+        
         self.flow_tree_widget.setDragEnabled(True)
         self.flow_tree_widget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.flow_tree_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        
+        # --- 시그널과 슬롯 연결 ---
         self.flow_tree_widget.customContextMenuRequested.connect(self.open_context_menu)
         self.flow_tree_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
         self.flow_tree_widget.itemSelectionChanged.connect(self.on_selection_changed)
+        
+        # CustomTreeWidget에서 보낸 element_dropped 신호를 _add_new_step_from_element 메서드와 연결
+        self.flow_tree_widget.element_dropped.connect(self._add_new_step_from_element)
         
         main_layout = QVBoxLayout(self)
         panel_groupbox = QGroupBox("시나리오 편집기")
@@ -377,4 +386,3 @@ class FlowEditor(QWidget):
             condition, params = dialog.get_wait_params()
             if not condition: return
             self._add_step_item({"id": str(uuid.uuid4()), "type": "control", "control_type": "wait_for_condition", "condition": condition, "params": params})
-
