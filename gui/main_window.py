@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
     QPushButton, QLabel, QLineEdit, QSplitter, QFileDialog, QToolBar,
     QMessageBox, QTextEdit, QGroupBox
 )
-from PyQt6.QtGui import QAction, QTextCursor
+from PyQt6.QtGui import QAction, QTextCursor, QShortcut, QKeySequence
 from PyQt6.QtCore import QThread, pyqtSignal, Qt
 from core.app_connector import AppConnector
 from core.scenario_runner import ScenarioRunner
@@ -99,6 +99,7 @@ class MainWindow(QMainWindow):
         self._create_toolbars()
         self._setup_ui()
         self._connect_signals()
+        self._create_shortcuts() # 🔻 단축키 설정 함수 호출 추가    
 
     def _setup_ui(self):
         """모든 UI 위젯을 생성하고 레이아웃을 설정합니다."""
@@ -208,6 +209,27 @@ class MainWindow(QMainWindow):
         self.monitor_toggle_btn.clicked.connect(self.toggle_log_monitor)
 
     # --- 이하 사용자 액션에 대한 응답을 처리하는 슬롯 메서드들 ---
+
+    # 🔻 아래 두 개의 메서드를 MainWindow 클래스 내에 새로 추가합니다.
+    def _create_shortcuts(self):
+        """애플리케이션의 단축키를 설정합니다."""
+        # Alt+Right 단축키가 self.ui_tree_view 위젯에 포커스가 있을 때만 동작하도록 설정
+        transfer_shortcut = QShortcut(QKeySequence("Alt+Right"), self.ui_tree_view)
+        transfer_shortcut.setContext(Qt.ShortcutContext.WidgetShortcut)
+        transfer_shortcut.activated.connect(self.transfer_selected_ui_element)
+
+    def transfer_selected_ui_element(self):
+        """UITreeView에서 선택된 요소를 FlowEditor로 전달하는 슬롯 메서드."""
+        log.debug("Alt+Right shortcut activated.")
+        # 1. UITreeView에서 선택된 요소의 정보를 가져옵니다.
+        element_props = self.ui_tree_view.get_selected_element_properties()
+        
+        # 2. 정보가 있다면 FlowEditor에 추가합니다.
+        if element_props:
+            log.info(f"Transferring element via shortcut: {element_props.get('title')}")
+            self.flow_editor.add_step_from_element(element_props)
+        else:
+            log.debug("No element selected in UI Tree to transfer.")
     
     def start_ui_analysis(self):
         """'앱 연결' 버튼 클릭 시 UI 분석 스레드를 시작합니다."""

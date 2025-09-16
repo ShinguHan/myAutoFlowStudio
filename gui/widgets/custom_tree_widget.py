@@ -65,8 +65,11 @@ class CustomTreeWidget(QTreeWidget):
             json_bytes = mime_data.data("application/json/pywinauto-element")
             # 바이트 배열을 UTF-8 문자열로 디코딩하고, JSON 파싱을 통해 딕셔너리로 변환합니다.
             try:
-                element_props = json.loads(json_bytes.data().decode('utf-8'))
+                # element_props = json.loads(json_bytes.data().decode('utf-8'))
                 # element_dropped 시그널을 발생시켜 FlowEditor에 알립니다.
+                 # ✅ 수정된 부분: .data()를 제거하여 QByteArray를 올바르게 디코딩합니다.
+                element_props = json.loads(json_bytes.decode('utf-8'))
+
                 self.element_dropped.emit(element_props)
                 # 이벤트 처리가 완료되었음을 알립니다.
                 event.acceptProposedAction()

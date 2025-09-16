@@ -132,6 +132,9 @@ class FlowEditor(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # 🔻🔻🔻 이 코드를 추가하여 FlowEditor 컨테이너가 드롭 이벤트를 받도록 설정합니다. 🔻🔻🔻
+        self.setAcceptDrops(True)
+        
         self.flow_tree_widget = CustomTreeWidget()
         self.flow_tree_widget.setHeaderHidden(True)
         self.flow_tree_widget.setAcceptDrops(True)
@@ -150,7 +153,7 @@ class FlowEditor(QWidget):
         self.flow_tree_widget.itemSelectionChanged.connect(self.on_selection_changed)
         
         # CustomTreeWidget에서 보낸 element_dropped 신호를 _add_new_step_from_element 메서드와 연결
-        self.flow_tree_widget.element_dropped.connect(self._add_new_step_from_element)
+        # self.flow_tree_widget.element_dropped.connect(self._add_new_step_from_element)
         
         main_layout = QVBoxLayout(self)
         panel_groupbox = QGroupBox("시나리오 편집기")
@@ -162,7 +165,7 @@ class FlowEditor(QWidget):
         
         self.parent_stack = []
 
-    def _add_new_step_from_element(self, element_props):
+    def add_new_step_from_element(self, element_props):
         """UI 탐색기에서 드롭된 요소를 기반으로 새로운 'action' 단계를 추가합니다."""
         log.info(f"Adding new step from element: {element_props.get('title')}")
         step_data = {
