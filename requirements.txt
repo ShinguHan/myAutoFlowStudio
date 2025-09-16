@@ -1,1 +1,2 @@
-이 파일은 AutoFlow Studio를 실행하는 데 필요한 모든 파이썬 패키지(라이브러리)의목록과 버전을 명시합니다.새로운 환경에서 이 프로젝트를 설정하려면, 터미널에서 아래 명령어를 실행하세요:pip install -r requirements.txtWindows UI 자동화를 위한 핵심 라이브러리pywinauto==0.6.8GUI 프레임워크PyQt6==6.7.0PyQt6의 추가적인 도구 (필요 시)PyQt6-Qt6==6.7.0PyQt6-sip==13.6.0
+pywinauto
+PyQt6

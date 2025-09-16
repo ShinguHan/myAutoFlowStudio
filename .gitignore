@@ -1,0 +1,14 @@
+#Virtual Environment
+venv/
+
+#Python Caches
+pycache/
+*.pyc
+
+#IDE settings
+.vscode/
+.idea/
+
+#Build artifacts
+build/
+dist/
