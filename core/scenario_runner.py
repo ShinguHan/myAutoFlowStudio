@@ -257,7 +257,7 @@ class ScenarioRunner:
 
     def _check_app_is_alive(self):
         """대상 앱이 여전히 활성 상태인지 확인합니다."""
-        if not self.main_window or not self.main_window.is_alive() or not self.main_window.exists():
+        if not self.main_window or not self.main_window.exists():
             raise TargetAppClosedError("대상 애플리케이션이 닫혔거나 응답하지 않습니다.")
 
     def _resolve_variables(self, text, data_row):

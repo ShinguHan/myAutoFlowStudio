@@ -213,21 +213,24 @@ class MainWindow(QMainWindow):
     # 🔻 아래 두 개의 메서드를 MainWindow 클래스 내에 새로 추가합니다.
     def _create_shortcuts(self):
         """애플리케이션의 단축키를 설정합니다."""
-        # Alt+Right 단축키가 self.ui_tree_view 위젯에 포커스가 있을 때만 동작하도록 설정
-        transfer_shortcut = QShortcut(QKeySequence("Alt+Right"), self.ui_tree_view)
-        transfer_shortcut.setContext(Qt.ShortcutContext.WidgetShortcut)
+        # ✅ 단축키의 부모를 self (MainWindow)로 변경하고, 컨텍스트를 WindowShortcut으로 설정합니다.
+        transfer_shortcut = QShortcut(QKeySequence("Alt+Right"), self)
+        transfer_shortcut.setContext(Qt.ShortcutContext.WindowShortcut) # ⬅️ 이 부분이 핵심
         transfer_shortcut.activated.connect(self.transfer_selected_ui_element)
 
     def transfer_selected_ui_element(self):
         """UITreeView에서 선택된 요소를 FlowEditor로 전달하는 슬롯 메서드."""
+        # 이 위젯이 현재 활성화된 창의 포커스 위젯인지 확인하여,
+        # 다른 위젯에 포커스가 있을 때 단축키가 오작동하는 것을 방지합니다.
+        if not self.ui_tree_view.tree_widget.hasFocus():
+            return
+            
         log.debug("Alt+Right shortcut activated.")
-        # 1. UITreeView에서 선택된 요소의 정보를 가져옵니다.
         element_props = self.ui_tree_view.get_selected_element_properties()
         
-        # 2. 정보가 있다면 FlowEditor에 추가합니다.
         if element_props:
             log.info(f"Transferring element via shortcut: {element_props.get('title')}")
-            self.flow_editor.add_step_from_element(element_props)
+            self.flow_editor.add_new_step_from_element(element_props)
         else:
             log.debug("No element selected in UI Tree to transfer.")
     
