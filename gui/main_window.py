@@ -207,8 +207,29 @@ class MainWindow(QMainWindow):
         self.parallel_runner_panel.run_request_from_slot.connect(self.run_parallel_scenario)
         self.flow_editor.selectionChanged.connect(self.update_group_action_state)
         self.monitor_toggle_btn.clicked.connect(self.toggle_log_monitor)
+        self.ui_tree_view.refresh_request.connect(self.on_ui_tree_refresh_request)
 
     # --- 이하 사용자 액션에 대한 응답을 처리하는 슬롯 메서드들 ---
+    # 🔻 '새로고침' 요청을 처리하는 새로운 슬롯 메서드 추가
+    def on_ui_tree_refresh_request(self, item):
+        """UITreeView에서 하위 요소 새로고침 요청이 오면 처리합니다."""
+        log.info("UI tree refresh requested.")
+        element_props = item.data(0, Qt.ItemDataRole.UserRole)
+        if not element_props:
+            return
+
+        # 백그라운드 스레드에서 UI를 분석하는 것이 좋지만,
+        # 이 기능은 사용자가 명시적으로 호출하므로 간단하게 직접 호출로 구현합니다.
+        # (만약 여기서도 멈춤 현상이 발생한다면, 이 로직을 별도 Worker 스레드로 옮겨야 합니다.)
+        if self.connector_worker and self.connector_worker.connector:
+            subtree_data = self.connector_worker.connector.get_subtree_after_click(element_props)
+            if subtree_data:
+                self.ui_tree_view.update_item_children(item, subtree_data)
+                log.info("UI tree item refreshed successfully.")
+            else:
+                log.warning("Failed to get subtree data for refresh.")
+        else:
+            log.error("App connector is not available for refresh.")
 
     # 🔻 아래 두 개의 메서드를 MainWindow 클래스 내에 새로 추가합니다.
     def _create_shortcuts(self):
