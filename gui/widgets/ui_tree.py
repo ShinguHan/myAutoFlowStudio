@@ -2,62 +2,58 @@
 
 # -*- coding: utf-8 -*-
 import json
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTreeWidget, QTreeWidgetItem
-from PyQt6.QtCore import Qt, QMimeData, QByteArray
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTreeWidget, QTreeWidgetItem,QMenu
+from PyQt6.QtCore import Qt, pyqtSignal, QByteArray
 from PyQt6.QtGui import QDrag
 from utils.logger_config import log
 
-class DraggableTreeWidget(QTreeWidget):
-    """
-    드래그 시작 로직을 커스터마이징한 QTreeWidget의 서브클래스.
-    """
+class ExplorableTreeWidget(QTreeWidget):
+    """컨텍스트 메뉴를 통해 하위 요소 새로고침을 요청하는 커스텀 트리 위젯."""
+    # 사용자가 '새로고침'을 요청한 QTreeWidgetItem을 전달하는 시그널
+    refresh_request = pyqtSignal(QTreeWidgetItem)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setHeaderHidden(True)
-        self.setDragEnabled(True)
-        self.setAcceptDrops(False)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.open_context_menu)
 
-    def startDrag(self, supportedActions):
-        """
-        드래그가 시작될 때 호출되어, 전달할 데이터를 MIME 데이터로 포장합니다.
-        QTreeWidget의 메서드를 직접 오버라이드하는 가장 안정적인 방법입니다.
-        """
-        log.debug("--- Drag operation initiated from DraggableTreeWidget ---")
-        selected_items = self.selectedItems()
-        if not selected_items:
+    def open_context_menu(self, position):
+        item = self.itemAt(position)
+        if not item:
             return
 
-        item = selected_items[0]
-        element_props = item.data(0, Qt.ItemDataRole.UserRole)
-        
-        if not element_props:
-            return
+        menu = QMenu()
+        refresh_action = menu.addAction("하위 요소 새로고침 (Refresh Children)")
+        action = menu.exec(self.mapToGlobal(position))
 
-        mime_data = QMimeData()
-        # 데이터를 JSON 형식으로 직렬화하여 MIME 데이터에 담습니다.
-        json_data = json.dumps(element_props).encode('utf-8')
-        mime_data.setData("application/json/pywinauto-element", QByteArray(json_data))
-        
-        # 드래그 객체를 생성하고 실행합니다.
-        drag = QDrag(self)
-        drag.setMimeData(mime_data)
-        drag.exec(Qt.DropAction.MoveAction)
+        if action == refresh_action:
+            self.refresh_request.emit(item)
 
 
 class UITreeView(QWidget):
-    """
-    AppConnector가 분석한 UI 구조를 표시하는 트리뷰 위젯.
-    """
+    # ✅ refresh_request 시그널을 MainWindow로 전달하기 위해 클래스에 정의
+    refresh_request = pyqtSignal(QTreeWidgetItem)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         
-        # ✅ 표준 QTreeWidget 대신, 우리가 만든 DraggableTreeWidget을 사용합니다.
-        self.tree_widget = DraggableTreeWidget()
+        # ✅ ExplorableTreeWidget 사용
+        self.tree_widget = ExplorableTreeWidget()
+        self.tree_widget.refresh_request.connect(self.refresh_request.emit) # 시그널 전달
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0,0,0,0)
         layout.addWidget(self.tree_widget)
         self.setLayout(layout)
+
+    # 🔻 아이템의 자식만 업데이트하는 새로운 메서드 추가
+    def update_item_children(self, parent_item, children_data):
+        """지정된 아이템의 자식 노드를 지우고 새 데이터로 교체합니다."""
+        parent_item.takeChildren() # 기존 자식 모두 삭제
+        for child_node in children_data.get("children", []):
+            self._add_items_recursive(parent_item, child_node)
+        parent_item.setExpanded(True) # 업데이트 후 자동으로 펼치기
 
     def get_selected_element_properties(self):
         """현재 선택된 아이템의 속성(dict)을 반환합니다. 선택된 아이템이 없으면 None을 반환합니다."""
