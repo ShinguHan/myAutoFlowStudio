@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-이 모듈은 AutoFlow Studio의 핵심 UI 중 하나인 시나리오 편집기(FlowEditor)를 정의합니다.
-사용자는 이 위젯을 통해 자동화 단계를 시각적으로 구성, 편집, 재정렬할 수 있습니다.
-- CustomTreeWidget을 사용하여 중첩된 제어 흐름을 직관적으로 표시
-- 드래그 앤 드롭, 더블 클릭, 컨텍스트 메뉴 등 다양한 사용자 상호작용 처리
-- 시나리오 데이터를 내부 데이터 구조와 UI 표현 사이에서 변환
-"""
+# gui/widgets/flow_editor.py
+
 import json
 import uuid
 from PyQt6.QtWidgets import (
@@ -18,8 +12,7 @@ from PyQt6.QtCore import Qt, QMimeData, pyqtSignal
 from utils.logger_config import log
 from .custom_tree_widget import CustomTreeWidget
 
-# --- 헬퍼 다이얼로그 클래스들 ---
-# 각 액션/제어 블록의 상세 파라미터를 설정하기 위한 작은 팝업창들입니다.
+# --- (헬퍼 다이얼로그 클래스들은 기존과 동일) ---
 
 class ConditionDialog(QDialog):
     """IF 문의 조건을 설정하는 다이얼로그"""
@@ -125,35 +118,29 @@ class SetWaitDialog(QDialog):
         condition = {"type": cond_type_map[self.condition_type_combo.currentText()], "target": {"title": self.target_title_input.text()}}
         params = {"timeout": int(self.timeout_input.text())}
         return condition, params
-
+        
 class FlowEditor(QWidget):
     """자동화 흐름을 시각적으로 편집하는 메인 위젯."""
     selectionChanged = pyqtSignal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        # 🔻🔻🔻 이 코드를 추가하여 FlowEditor 컨테이너가 드롭 이벤트를 받도록 설정합니다. 🔻🔻🔻
         self.setAcceptDrops(True)
         
         self.flow_tree_widget = CustomTreeWidget()
         self.flow_tree_widget.setHeaderHidden(True)
         self.flow_tree_widget.setAcceptDrops(True)
-        
-        # *** ✨ 여기가 수정된 부분입니다 ✨ ***
-        # 외부 드롭(UI 요소 추가)과 내부 이동(순서 변경)을 모두 허용하도록 모드를 변경합니다.
         self.flow_tree_widget.setDragDropMode(QAbstractItemView.DragDropMode.DragDrop)
-        
         self.flow_tree_widget.setDragEnabled(True)
         self.flow_tree_widget.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.flow_tree_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         
-        # --- 시그널과 슬롯 연결 ---
         self.flow_tree_widget.customContextMenuRequested.connect(self.open_context_menu)
         self.flow_tree_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
         self.flow_tree_widget.itemSelectionChanged.connect(self.on_selection_changed)
         
-        # CustomTreeWidget에서 보낸 element_dropped 신호를 _add_new_step_from_element 메서드와 연결
-        # self.flow_tree_widget.element_dropped.connect(self._add_new_step_from_element)
+        # CustomTreeWidget의 시그널을 바로 연결
+        self.flow_tree_widget.element_dropped.connect(self.add_new_step_from_element)
         
         main_layout = QVBoxLayout(self)
         panel_groupbox = QGroupBox("시나리오 편집기")
@@ -165,18 +152,23 @@ class FlowEditor(QWidget):
         
         self.parent_stack = []
 
-    def add_new_step_from_element(self, element_props):
+    def add_new_step_from_element(self, element_data):
         """UI 탐색기에서 드롭된 요소를 기반으로 새로운 'action' 단계를 추가합니다."""
+        element_props = element_data.get("properties", {})
+        element_path = element_data.get("path", [])
         log.info(f"Adding new step from element: {element_props.get('title')}")
+        
         step_data = {
-            "id": str(uuid.uuid4()), "type": "action", "action": "click",
-            "target": {"title": element_props.get("title"), "control_type": element_props.get("control_type"), "auto_id": element_props.get("auto_id")},
-            "params": {}, "onError": {"method": "stop"}
+            "id": str(uuid.uuid4()),
+            "type": "action",
+            "action": "click",
+            "path": element_path, # 경로 정보 저장
+            "params": {},
+            "onError": {"method": "stop"}
         }
         self._add_step_item(step_data)
 
     def _add_step_item(self, step_data):
-        """주어진 데이터로 트리 위젯에 새 아이템을 추가하고, 중첩 구조를 관리합니다."""
         parent = self.parent_stack[-1] if self.parent_stack else self.flow_tree_widget.invisibleRootItem()
         item = QTreeWidgetItem(parent)
         self.update_item_display(item, step_data)
@@ -192,7 +184,6 @@ class FlowEditor(QWidget):
                     self.parent_stack.pop()
 
     def get_scenario_data(self):
-        """트리 구조를 순회하여 순차적인 리스트 데이터로 변환합니다."""
         steps = []
         iterator = QTreeWidgetItemIterator(self.flow_tree_widget)
         while iterator.value():
@@ -202,14 +193,12 @@ class FlowEditor(QWidget):
         return steps
 
     def populate_from_data(self, scenario_data):
-        """저장된 데이터로 트리 위젯의 내용을 다시 구성합니다."""
         self.flow_tree_widget.clear()
         self.parent_stack.clear()
         for step in scenario_data:
             self._add_step_item(step)
     
     def on_item_double_clicked(self, item, column):
-        """아이템 더블 클릭 시 파라미터 편집 다이얼로그를 엽니다."""
         step_data = item.data(0, Qt.ItemDataRole.UserRole)
         if not step_data: return
 
@@ -224,13 +213,12 @@ class FlowEditor(QWidget):
             iterations, ok = QInputDialog.getInt(self, "반복 횟수 설정", "몇 번 반복할까요?", step_data.get("iterations", 1), 1, 10000)
             if ok: step_data["iterations"] = iterations
         else:
-            return # 편집할 파라미터가 없는 경우 종료
+            return
         
         item.setData(0, Qt.ItemDataRole.UserRole, step_data)
         self.update_item_display(item, step_data)
 
     def open_context_menu(self, position):
-        """아이템 우클릭 시 컨텍스트 메뉴를 엽니다."""
         item = self.flow_tree_widget.itemAt(position)
         if not item: return
 
@@ -240,7 +228,6 @@ class FlowEditor(QWidget):
         menu = QMenu()
         
         if step_data.get("type") == "action":
-            # 액션 타입 변경 메뉴
             change_action_menu = menu.addMenu("동작 변경")
             to_click = QAction("Click", self); to_click.triggered.connect(lambda: self.change_action_type(item, "click"))
             to_set_text = QAction("Set Text", self); to_set_text.triggered.connect(lambda: self.change_action_type(item, "set_text"))
@@ -248,7 +235,6 @@ class FlowEditor(QWidget):
             change_action_menu.addActions([to_click, to_set_text, to_get_text])
             menu.addSeparator()
             
-            # 오류 처리 설정
             set_on_error = QAction("오류 처리 설정...", self)
             set_on_error.triggered.connect(lambda: self.set_on_error_policy(item))
             menu.addAction(set_on_error)
@@ -262,10 +248,9 @@ class FlowEditor(QWidget):
     def change_action_type(self, item, new_action):
         step_data = item.data(0, Qt.ItemDataRole.UserRole)
         step_data["action"] = new_action
-        # 액션 타입 변경 시 파라미터 초기화
         step_data["params"] = {} 
         if new_action == "set_text":
-            self.on_item_double_clicked(item, 0) # 바로 텍스트 편집창 열기
+            self.on_item_double_clicked(item, 0)
         elif new_action == "get_text":
             dialog = GetVariableNameDialog("", self)
             if dialog.exec():
@@ -290,14 +275,18 @@ class FlowEditor(QWidget):
         display_text = self._get_display_text(step_data)
         item.setText(0, display_text)
 
+    # ✅ 핵심 수정: 이 함수를 수정하여 'path'에서 정보를 가져오도록 합니다.
     def _get_display_text(self, step_data):
-        """시나리오 데이터로부터 사람이 읽기 쉬운 설명을 생성합니다."""
         display_text = "Unknown Step"
         step_type = step_data.get("type")
 
         if step_type == "action":
             action = step_data.get('action', 'N/A').upper()
-            target_title = step_data.get('target', {}).get('title', 'Unknown')
+            
+            path = step_data.get('path', [])
+            target_props = path[-1] if path else {}
+            target_title = target_props.get('title', 'Unknown')
+
             params = step_data.get('params', {})
             on_error = step_data.get("onError", {})
             
@@ -357,7 +346,7 @@ class FlowEditor(QWidget):
         group_item.setData(0, Qt.ItemDataRole.UserRole, start_group_data)
         
         for item in selected_items:
-            parent.removeChild(item)
+            (item.parent() or self.flow_tree_widget.invisibleRootItem()).removeChild(item)
             group_item.addChild(item)
             
         parent.insertChild(insert_row, group_item)
