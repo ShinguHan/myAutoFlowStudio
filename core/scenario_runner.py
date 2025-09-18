@@ -151,59 +151,65 @@ class ScenarioRunner:
             pc += 1
 
     # --- 이하 헬퍼 및 실제 실행 메서드들 ---
+    # core/scenario_runner.py
 
-    # ✅ 추가: 동적 UI 탐색을 위한 새로운 헬퍼 메서드
+# ... (기존 코드)
+
+# ✅ 추가: 동적 UI 탐색을 위한 새로운 헬퍼 메서드
     def _find_element_dynamically(self, path):
         """
         주어진 경로(path)를 따라가며 동적으로 UI 요소를 찾습니다.
-        TabItem을 만나면 선택하여 하위 요소가 로드되도록 합니다.
+        안정적인 식별자(auto_id, control_type)를 우선 사용하고, 검색 조건을 명확히 하여 안정성을 극대화합니다.
         """
         log.debug(f"Starting dynamic element search with path of length {len(path)}")
         current_element = self.main_window
 
-        # 경로의 마지막 요소는 최종 타겟이므로, 그 전까지만 순회합니다.
-        for i, step_props in enumerate(path[:-1]):
+        # 경로의 마지막 요소(실제 타겟)를 제외한 부모 요소들을 먼저 순회합니다.
+        for i, parent_props in enumerate(path[:-1]):
             search_criteria = {}
-            runtime_id = step_props.get("runtime_id")
-            if runtime_id:
-                search_criteria["runtime_id"] = runtime_id
-            else:
-                search_criteria["title"] = step_props.get("title")
-                search_criteria["control_type"] = step_props.get("control_type")
-                auto_id = step_props.get("auto_id")
-                if auto_id:
-                    search_criteria["auto_id"] = auto_id
-            
+            # 💡 핵심 개선: auto_id, control_type, title 순으로 안정적인 식별자를 우선 사용합니다.
+            # 또한, 값이 비어있지 않은 유효한 속성만 검색 조건으로 사용합니다.
+            if parent_props.get("auto_id"):
+                search_criteria["auto_id"] = parent_props.get("auto_id")
+            if parent_props.get("control_type"):
+                search_criteria["control_type"] = parent_props.get("control_type")
+            if parent_props.get("title"):
+                search_criteria["title"] = parent_props.get("title")
+
+            if not search_criteria:
+                raise ValueError(f"Path step {i} has no valid identifiers: {parent_props}")
+
             try:
-                log.debug(f"Searching for child: {search_criteria}")
-                child = current_element.child_window(**search_criteria)
-                child.wait('exists', timeout=5)
+                log.debug(f"Searching for parent element: {search_criteria}")
+                # 💡 핵심 개선: 타임아웃을 10초로 늘려 안정성 확보
+                child = current_element.child_window(**search_criteria).wait('exists', timeout=10)
                 current_element = child
 
-                if step_props.get("control_type") == "TabItem":
-                    if not current_element.is_selected():
-                        log.info(f"Path traversal: Selecting TabItem '{step_props.get('title')}'")
-                        current_element.select()
-                        time.sleep(0.5)
+                # 탭(Tab) 컨트롤을 만나면 선택하여 하위 요소가 로드되도록 합니다.
+                if parent_props.get("control_type") == "TabItem" and not current_element.is_selected():
+                    log.info(f"Path traversal: Selecting TabItem '{parent_props.get('title')}'")
+                    current_element.select()
+                    # 💡 핵심 개선: 불안정한 time.sleep() 대신, 다음 루프의 wait()가 로딩을 기다려줍니다.
 
-            except (TimeoutError, pywinauto.findwindows.ElementNotFoundError):
-                log.error(f"Could not find element in path at step {i}: {step_props.get('title')}")
-                raise
+            except (TimeoutError, pywinauto.findwindows.ElementNotFoundError) as e:
+                log.error(f"Could not find parent element in path at step {i}: {parent_props.get('title')}", exc_info=True)
+                raise e # 원본 예외를 그대로 다시 발생시켜 상세 정보를 유지합니다.
 
-        # 최종 타겟을 찾습니다.
+        # 마지막으로, 최종 타겟 요소를 찾습니다.
         final_target_props = path[-1]
         final_search_criteria = {}
-        final_runtime_id = final_target_props.get("runtime_id")
-        if final_runtime_id:
-            final_search_criteria["runtime_id"] = final_runtime_id
-        else:
-            final_search_criteria["title"] = final_target_props.get("title")
+        if final_target_props.get("auto_id"):
+            final_search_criteria["auto_id"] = final_target_props.get("auto_id")
+        if final_target_props.get("control_type"):
             final_search_criteria["control_type"] = final_target_props.get("control_type")
-            final_auto_id = final_target_props.get("auto_id")
-            if final_auto_id:
-                final_search_criteria["auto_id"] = final_auto_id
-        
+        if final_target_props.get("title"):
+            final_search_criteria["title"] = final_target_props.get("title")
+
+        if not final_search_criteria:
+            raise ValueError(f"Final target has no valid identifiers: {final_target_props}")
+
         log.debug(f"Searching for final target: {final_search_criteria} within parent '{current_element.window_text()}'")
+        # 최종 타겟을 반환합니다.
         return current_element.child_window(**final_search_criteria)
 
     # ✅ 수정: _find_element_dynamically를 사용하도록 로직 변경

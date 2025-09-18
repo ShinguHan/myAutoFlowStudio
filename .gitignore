@@ -15,3 +15,5 @@ dist/
 
 logs/
 *.log
+reports/
+*.html
