@@ -1,0 +1,2440 @@
+{
+    "properties": {
+        "title": "제목 없음 - 메모장",
+        "control_type": "Window",
+        "auto_id": "",
+        "runtime_id": [
+            42,
+            133188
+        ]
+    },
+    "path": [
+        {
+            "title": "제목 없음 - 메모장",
+            "control_type": "Window",
+            "auto_id": "",
+            "runtime_id": [
+                42,
+                133188
+            ]
+        }
+    ],
+    "children": [
+        {
+            "properties": {
+                "title": "",
+                "control_type": "Pane",
+                "auto_id": "",
+                "runtime_id": [
+                    42,
+                    133208
+                ]
+            },
+            "path": [
+                {
+                    "title": "제목 없음 - 메모장",
+                    "control_type": "Window",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133188
+                    ]
+                },
+                {
+                    "title": "",
+                    "control_type": "Pane",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133208
+                    ]
+                }
+            ],
+            "children": [
+                {
+                    "properties": {
+                        "title": "텍스트 편집기",
+                        "control_type": "Document",
+                        "auto_id": "",
+                        "runtime_id": [
+                            42,
+                            198752
+                        ]
+                    },
+                    "path": [
+                        {
+                            "title": "제목 없음 - 메모장",
+                            "control_type": "Window",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "Pane",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133208
+                            ]
+                        },
+                        {
+                            "title": "텍스트 편집기",
+                            "control_type": "Document",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                198752
+                            ]
+                        }
+                    ],
+                    "children": []
+                }
+            ]
+        },
+        {
+            "properties": {
+                "title": "",
+                "control_type": "Pane",
+                "auto_id": "",
+                "runtime_id": [
+                    42,
+                    133182
+                ]
+            },
+            "path": [
+                {
+                    "title": "제목 없음 - 메모장",
+                    "control_type": "Window",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133188
+                    ]
+                },
+                {
+                    "title": "",
+                    "control_type": "Pane",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133182
+                    ]
+                }
+            ],
+            "children": [
+                {
+                    "properties": {
+                        "title": "",
+                        "control_type": "Pane",
+                        "auto_id": "",
+                        "runtime_id": [
+                            42,
+                            133180
+                        ]
+                    },
+                    "path": [
+                        {
+                            "title": "제목 없음 - 메모장",
+                            "control_type": "Window",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "Pane",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133182
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "Pane",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133180
+                            ]
+                        }
+                    ],
+                    "children": [
+                        {
+                            "properties": {
+                                "title": "",
+                                "control_type": "Tab",
+                                "auto_id": "Tabs",
+                                "runtime_id": [
+                                    42,
+                                    133180,
+                                    4,
+                                    8
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133182
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133180
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Tab",
+                                    "auto_id": "Tabs",
+                                    "runtime_id": [
+                                        42,
+                                        133180,
+                                        4,
+                                        8
+                                    ]
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "properties": {
+                                        "title": "",
+                                        "control_type": "List",
+                                        "auto_id": "TabListView",
+                                        "runtime_id": [
+                                            42,
+                                            133180,
+                                            4,
+                                            5
+                                        ]
+                                    },
+                                    "path": [
+                                        {
+                                            "title": "제목 없음 - 메모장",
+                                            "control_type": "Window",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133188
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133182
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133180
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Tab",
+                                            "auto_id": "Tabs",
+                                            "runtime_id": [
+                                                42,
+                                                133180,
+                                                4,
+                                                8
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "List",
+                                            "auto_id": "TabListView",
+                                            "runtime_id": [
+                                                42,
+                                                133180,
+                                                4,
+                                                5
+                                            ]
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "properties": {
+                                                "title": "제목 없음. 수정되지 않았습니다.",
+                                                "control_type": "TabItem",
+                                                "auto_id": "",
+                                                "runtime_id": [
+                                                    42,
+                                                    133180,
+                                                    4,
+                                                    4
+                                                ]
+                                            },
+                                            "path": [
+                                                {
+                                                    "title": "제목 없음 - 메모장",
+                                                    "control_type": "Window",
+                                                    "auto_id": "",
+                                                    "runtime_id": [
+                                                        42,
+                                                        133188
+                                                    ]
+                                                },
+                                                {
+                                                    "title": "",
+                                                    "control_type": "Pane",
+                                                    "auto_id": "",
+                                                    "runtime_id": [
+                                                        42,
+                                                        133182
+                                                    ]
+                                                },
+                                                {
+                                                    "title": "",
+                                                    "control_type": "Pane",
+                                                    "auto_id": "",
+                                                    "runtime_id": [
+                                                        42,
+                                                        133180
+                                                    ]
+                                                },
+                                                {
+                                                    "title": "",
+                                                    "control_type": "Tab",
+                                                    "auto_id": "Tabs",
+                                                    "runtime_id": [
+                                                        42,
+                                                        133180,
+                                                        4,
+                                                        8
+                                                    ]
+                                                },
+                                                {
+                                                    "title": "",
+                                                    "control_type": "List",
+                                                    "auto_id": "TabListView",
+                                                    "runtime_id": [
+                                                        42,
+                                                        133180,
+                                                        4,
+                                                        5
+                                                    ]
+                                                },
+                                                {
+                                                    "title": "제목 없음. 수정되지 않았습니다.",
+                                                    "control_type": "TabItem",
+                                                    "auto_id": "",
+                                                    "runtime_id": [
+                                                        42,
+                                                        133180,
+                                                        4,
+                                                        4
+                                                    ]
+                                                }
+                                            ],
+                                            "children": [
+                                                {
+                                                    "properties": {
+                                                        "title": "제목 없음",
+                                                        "control_type": "Text",
+                                                        "auto_id": "",
+                                                        "runtime_id": [
+                                                            42,
+                                                            133180,
+                                                            4,
+                                                            1
+                                                        ]
+                                                    },
+                                                    "path": [
+                                                        {
+                                                            "title": "제목 없음 - 메모장",
+                                                            "control_type": "Window",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133188
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "",
+                                                            "control_type": "Pane",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133182
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "",
+                                                            "control_type": "Pane",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "",
+                                                            "control_type": "Tab",
+                                                            "auto_id": "Tabs",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180,
+                                                                4,
+                                                                8
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "",
+                                                            "control_type": "List",
+                                                            "auto_id": "TabListView",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180,
+                                                                4,
+                                                                5
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "제목 없음. 수정되지 않았습니다.",
+                                                            "control_type": "TabItem",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180,
+                                                                4,
+                                                                4
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "제목 없음",
+                                                            "control_type": "Text",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180,
+                                                                4,
+                                                                1
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "children": []
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "title": "탭 닫기",
+                                                        "control_type": "Button",
+                                                        "auto_id": "CloseButton",
+                                                        "runtime_id": [
+                                                            42,
+                                                            133180,
+                                                            4,
+                                                            3
+                                                        ]
+                                                    },
+                                                    "path": [
+                                                        {
+                                                            "title": "제목 없음 - 메모장",
+                                                            "control_type": "Window",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133188
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "",
+                                                            "control_type": "Pane",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133182
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "",
+                                                            "control_type": "Pane",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "",
+                                                            "control_type": "Tab",
+                                                            "auto_id": "Tabs",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180,
+                                                                4,
+                                                                8
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "",
+                                                            "control_type": "List",
+                                                            "auto_id": "TabListView",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180,
+                                                                4,
+                                                                5
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "제목 없음. 수정되지 않았습니다.",
+                                                            "control_type": "TabItem",
+                                                            "auto_id": "",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180,
+                                                                4,
+                                                                4
+                                                            ]
+                                                        },
+                                                        {
+                                                            "title": "탭 닫기",
+                                                            "control_type": "Button",
+                                                            "auto_id": "CloseButton",
+                                                            "runtime_id": [
+                                                                42,
+                                                                133180,
+                                                                4,
+                                                                3
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "children": []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "properties": {
+                                        "title": "새 탭 추가",
+                                        "control_type": "Button",
+                                        "auto_id": "AddButton",
+                                        "runtime_id": [
+                                            42,
+                                            133180,
+                                            4,
+                                            7
+                                        ]
+                                    },
+                                    "path": [
+                                        {
+                                            "title": "제목 없음 - 메모장",
+                                            "control_type": "Window",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133188
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133182
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133180
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Tab",
+                                            "auto_id": "Tabs",
+                                            "runtime_id": [
+                                                42,
+                                                133180,
+                                                4,
+                                                8
+                                            ]
+                                        },
+                                        {
+                                            "title": "새 탭 추가",
+                                            "control_type": "Button",
+                                            "auto_id": "AddButton",
+                                            "runtime_id": [
+                                                42,
+                                                133180,
+                                                4,
+                                                7
+                                            ]
+                                        }
+                                    ],
+                                    "children": []
+                                }
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "title": "메모장에 진행률이 자동으로 저장됩니다. 다음에 메모장을 열 때 모든 콘텐츠를 사용할 수 있습니다.",
+                                "control_type": "Pane",
+                                "auto_id": "TeachingTip",
+                                "runtime_id": [
+                                    42,
+                                    133180,
+                                    4,
+                                    9
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133182
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133180
+                                    ]
+                                },
+                                {
+                                    "title": "메모장에 진행률이 자동으로 저장됩니다. 다음에 메모장을 열 때 모든 콘텐츠를 사용할 수 있습니다.",
+                                    "control_type": "Pane",
+                                    "auto_id": "TeachingTip",
+                                    "runtime_id": [
+                                        42,
+                                        133180,
+                                        4,
+                                        9
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "properties": {
+                "title": "",
+                "control_type": "Pane",
+                "auto_id": "",
+                "runtime_id": [
+                    42,
+                    133168
+                ]
+            },
+            "path": [
+                {
+                    "title": "제목 없음 - 메모장",
+                    "control_type": "Window",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133188
+                    ]
+                },
+                {
+                    "title": "",
+                    "control_type": "Pane",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133168
+                    ]
+                }
+            ],
+            "children": [
+                {
+                    "properties": {
+                        "title": "",
+                        "control_type": "Pane",
+                        "auto_id": "",
+                        "runtime_id": [
+                            42,
+                            395276
+                        ]
+                    },
+                    "path": [
+                        {
+                            "title": "제목 없음 - 메모장",
+                            "control_type": "Window",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "Pane",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133168
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "Pane",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                395276
+                            ]
+                        }
+                    ],
+                    "children": [
+                        {
+                            "properties": {
+                                "title": "",
+                                "control_type": "MenuBar",
+                                "auto_id": "MenuBar",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    19
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "MenuBar",
+                                    "auto_id": "MenuBar",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        19
+                                    ]
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "properties": {
+                                        "title": "파일",
+                                        "control_type": "MenuItem",
+                                        "auto_id": "File",
+                                        "runtime_id": [
+                                            42,
+                                            395276,
+                                            4,
+                                            12
+                                        ]
+                                    },
+                                    "path": [
+                                        {
+                                            "title": "제목 없음 - 메모장",
+                                            "control_type": "Window",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133188
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133168
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                395276
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "MenuBar",
+                                            "auto_id": "MenuBar",
+                                            "runtime_id": [
+                                                42,
+                                                395276,
+                                                4,
+                                                19
+                                            ]
+                                        },
+                                        {
+                                            "title": "파일",
+                                            "control_type": "MenuItem",
+                                            "auto_id": "File",
+                                            "runtime_id": [
+                                                42,
+                                                395276,
+                                                4,
+                                                12
+                                            ]
+                                        }
+                                    ],
+                                    "children": []
+                                },
+                                {
+                                    "properties": {
+                                        "title": "편집",
+                                        "control_type": "MenuItem",
+                                        "auto_id": "Edit",
+                                        "runtime_id": [
+                                            42,
+                                            395276,
+                                            4,
+                                            15
+                                        ]
+                                    },
+                                    "path": [
+                                        {
+                                            "title": "제목 없음 - 메모장",
+                                            "control_type": "Window",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133188
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133168
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                395276
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "MenuBar",
+                                            "auto_id": "MenuBar",
+                                            "runtime_id": [
+                                                42,
+                                                395276,
+                                                4,
+                                                19
+                                            ]
+                                        },
+                                        {
+                                            "title": "편집",
+                                            "control_type": "MenuItem",
+                                            "auto_id": "Edit",
+                                            "runtime_id": [
+                                                42,
+                                                395276,
+                                                4,
+                                                15
+                                            ]
+                                        }
+                                    ],
+                                    "children": []
+                                },
+                                {
+                                    "properties": {
+                                        "title": "보기",
+                                        "control_type": "MenuItem",
+                                        "auto_id": "View",
+                                        "runtime_id": [
+                                            42,
+                                            395276,
+                                            4,
+                                            18
+                                        ]
+                                    },
+                                    "path": [
+                                        {
+                                            "title": "제목 없음 - 메모장",
+                                            "control_type": "Window",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133188
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133168
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                395276
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "MenuBar",
+                                            "auto_id": "MenuBar",
+                                            "runtime_id": [
+                                                42,
+                                                395276,
+                                                4,
+                                                19
+                                            ]
+                                        },
+                                        {
+                                            "title": "보기",
+                                            "control_type": "MenuItem",
+                                            "auto_id": "View",
+                                            "runtime_id": [
+                                                42,
+                                                395276,
+                                                4,
+                                                18
+                                            ]
+                                        }
+                                    ],
+                                    "children": []
+                                }
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "title": "제목",
+                                "control_type": "Button",
+                                "auto_id": "",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    21
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "제목",
+                                    "control_type": "Button",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        21
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "목록",
+                                "control_type": "Button",
+                                "auto_id": "",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    23
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "목록",
+                                    "control_type": "Button",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        23
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "굵게(Ctrl+B)",
+                                "control_type": "Button",
+                                "auto_id": "",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    25
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "굵게(Ctrl+B)",
+                                    "control_type": "Button",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        25
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "서식 지우기(Ctrl+스페이스바)",
+                                "control_type": "Button",
+                                "auto_id": "",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    27
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "서식 지우기(Ctrl+스페이스바)",
+                                    "control_type": "Button",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        27
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "연결(Ctrl+K)",
+                                "control_type": "Button",
+                                "auto_id": "",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    29
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "연결(Ctrl+K)",
+                                    "control_type": "Button",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        29
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "기울임꼴(Ctrl+I)",
+                                "control_type": "Button",
+                                "auto_id": "",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    31
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "기울임꼴(Ctrl+I)",
+                                    "control_type": "Button",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        31
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "기타 옵션",
+                                "control_type": "Button",
+                                "auto_id": "OverflowButton",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    33
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "기타 옵션",
+                                    "control_type": "Button",
+                                    "auto_id": "OverflowButton",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        33
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "Copilot(미리 보기)",
+                                "control_type": "Button",
+                                "auto_id": "RewriteDropDownButton",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    35
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "Copilot(미리 보기)",
+                                    "control_type": "Button",
+                                    "auto_id": "RewriteDropDownButton",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        35
+                                    ]
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "properties": {
+                                        "title": "",
+                                        "control_type": "Image",
+                                        "auto_id": "",
+                                        "runtime_id": [
+                                            42,
+                                            395276,
+                                            4,
+                                            34
+                                        ]
+                                    },
+                                    "path": [
+                                        {
+                                            "title": "제목 없음 - 메모장",
+                                            "control_type": "Window",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133188
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                133168
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Pane",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                395276
+                                            ]
+                                        },
+                                        {
+                                            "title": "Copilot(미리 보기)",
+                                            "control_type": "Button",
+                                            "auto_id": "RewriteDropDownButton",
+                                            "runtime_id": [
+                                                42,
+                                                395276,
+                                                4,
+                                                35
+                                            ]
+                                        },
+                                        {
+                                            "title": "",
+                                            "control_type": "Image",
+                                            "auto_id": "",
+                                            "runtime_id": [
+                                                42,
+                                                395276,
+                                                4,
+                                                34
+                                            ]
+                                        }
+                                    ],
+                                    "children": []
+                                }
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "title": "사용자 아바타",
+                                "control_type": "Button",
+                                "auto_id": "AvatarButton",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    38
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "사용자 아바타",
+                                    "control_type": "Button",
+                                    "auto_id": "AvatarButton",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        38
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "설정",
+                                "control_type": "Button",
+                                "auto_id": "SettingsButton",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    41
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "설정",
+                                    "control_type": "Button",
+                                    "auto_id": "SettingsButton",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        41
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "",
+                                "control_type": "Window",
+                                "auto_id": "PrivacyTeachingTip",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    42
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Window",
+                                    "auto_id": "PrivacyTeachingTip",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        42
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "",
+                                "control_type": "Window",
+                                "auto_id": "CowriterTeachingTip",
+                                "runtime_id": [
+                                    42,
+                                    395276,
+                                    4,
+                                    43
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133168
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        395276
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Window",
+                                    "auto_id": "CowriterTeachingTip",
+                                    "runtime_id": [
+                                        42,
+                                        395276,
+                                        4,
+                                        43
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "properties": {
+                "title": "",
+                "control_type": "Pane",
+                "auto_id": "",
+                "runtime_id": [
+                    42,
+                    133222
+                ]
+            },
+            "path": [
+                {
+                    "title": "제목 없음 - 메모장",
+                    "control_type": "Window",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133188
+                    ]
+                },
+                {
+                    "title": "",
+                    "control_type": "Pane",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133222
+                    ]
+                }
+            ],
+            "children": [
+                {
+                    "properties": {
+                        "title": "",
+                        "control_type": "Pane",
+                        "auto_id": "",
+                        "runtime_id": [
+                            42,
+                            198658
+                        ]
+                    },
+                    "path": [
+                        {
+                            "title": "제목 없음 - 메모장",
+                            "control_type": "Window",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "Pane",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133222
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "Pane",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                198658
+                            ]
+                        }
+                    ],
+                    "children": [
+                        {
+                            "properties": {
+                                "title": "줄 1,\n열 1",
+                                "control_type": "Text",
+                                "auto_id": "ContentTextBlock",
+                                "runtime_id": [
+                                    42,
+                                    198658,
+                                    4,
+                                    44
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133222
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        198658
+                                    ]
+                                },
+                                {
+                                    "title": "줄 1,\n열 1",
+                                    "control_type": "Text",
+                                    "auto_id": "ContentTextBlock",
+                                    "runtime_id": [
+                                        42,
+                                        198658,
+                                        4,
+                                        44
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "0자",
+                                "control_type": "Text",
+                                "auto_id": "ContentTextBlock",
+                                "runtime_id": [
+                                    42,
+                                    198658,
+                                    4,
+                                    45
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133222
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        198658
+                                    ]
+                                },
+                                {
+                                    "title": "0자",
+                                    "control_type": "Text",
+                                    "auto_id": "ContentTextBlock",
+                                    "runtime_id": [
+                                        42,
+                                        198658,
+                                        4,
+                                        45
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "일반 텍스트",
+                                "control_type": "Text",
+                                "auto_id": "ContentTextBlock",
+                                "runtime_id": [
+                                    42,
+                                    198658,
+                                    4,
+                                    46
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133222
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        198658
+                                    ]
+                                },
+                                {
+                                    "title": "일반 텍스트",
+                                    "control_type": "Text",
+                                    "auto_id": "ContentTextBlock",
+                                    "runtime_id": [
+                                        42,
+                                        198658,
+                                        4,
+                                        46
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": "확대/축소",
+                                "control_type": "Text",
+                                "auto_id": "ContentTextBlock",
+                                "runtime_id": [
+                                    42,
+                                    198658,
+                                    4,
+                                    47
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133222
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        198658
+                                    ]
+                                },
+                                {
+                                    "title": "확대/축소",
+                                    "control_type": "Text",
+                                    "auto_id": "ContentTextBlock",
+                                    "runtime_id": [
+                                        42,
+                                        198658,
+                                        4,
+                                        47
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": " Windows (CRLF)",
+                                "control_type": "Text",
+                                "auto_id": "ContentTextBlock",
+                                "runtime_id": [
+                                    42,
+                                    198658,
+                                    4,
+                                    48
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133222
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        198658
+                                    ]
+                                },
+                                {
+                                    "title": " Windows (CRLF)",
+                                    "control_type": "Text",
+                                    "auto_id": "ContentTextBlock",
+                                    "runtime_id": [
+                                        42,
+                                        198658,
+                                        4,
+                                        48
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        },
+                        {
+                            "properties": {
+                                "title": " UTF-8",
+                                "control_type": "Text",
+                                "auto_id": "ContentTextBlock",
+                                "runtime_id": [
+                                    42,
+                                    198658,
+                                    4,
+                                    49
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133222
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "Pane",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        198658
+                                    ]
+                                },
+                                {
+                                    "title": " UTF-8",
+                                    "control_type": "Text",
+                                    "auto_id": "ContentTextBlock",
+                                    "runtime_id": [
+                                        42,
+                                        198658,
+                                        4,
+                                        49
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "properties": {
+                "title": "",
+                "control_type": "TitleBar",
+                "auto_id": "",
+                "runtime_id": [
+                    42,
+                    133188,
+                    3,
+                    -2147483647,
+                    133188,
+                    -2,
+                    0
+                ]
+            },
+            "path": [
+                {
+                    "title": "제목 없음 - 메모장",
+                    "control_type": "Window",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133188
+                    ]
+                },
+                {
+                    "title": "",
+                    "control_type": "TitleBar",
+                    "auto_id": "",
+                    "runtime_id": [
+                        42,
+                        133188,
+                        3,
+                        -2147483647,
+                        133188,
+                        -2,
+                        0
+                    ]
+                }
+            ],
+            "children": [
+                {
+                    "properties": {
+                        "title": "시스템",
+                        "control_type": "MenuBar",
+                        "auto_id": "MenuBar",
+                        "runtime_id": [
+                            42,
+                            133188,
+                            3,
+                            -2147483646,
+                            30048,
+                            589997,
+                            0
+                        ]
+                    },
+                    "path": [
+                        {
+                            "title": "제목 없음 - 메모장",
+                            "control_type": "Window",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "TitleBar",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188,
+                                3,
+                                -2147483647,
+                                133188,
+                                -2,
+                                0
+                            ]
+                        },
+                        {
+                            "title": "시스템",
+                            "control_type": "MenuBar",
+                            "auto_id": "MenuBar",
+                            "runtime_id": [
+                                42,
+                                133188,
+                                3,
+                                -2147483646,
+                                30048,
+                                589997,
+                                0
+                            ]
+                        }
+                    ],
+                    "children": [
+                        {
+                            "properties": {
+                                "title": "시스템",
+                                "control_type": "MenuItem",
+                                "auto_id": "",
+                                "runtime_id": [
+                                    42,
+                                    133188,
+                                    3,
+                                    -2147483646,
+                                    30048,
+                                    589997,
+                                    1
+                                ]
+                            },
+                            "path": [
+                                {
+                                    "title": "제목 없음 - 메모장",
+                                    "control_type": "Window",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188
+                                    ]
+                                },
+                                {
+                                    "title": "",
+                                    "control_type": "TitleBar",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188,
+                                        3,
+                                        -2147483647,
+                                        133188,
+                                        -2,
+                                        0
+                                    ]
+                                },
+                                {
+                                    "title": "시스템",
+                                    "control_type": "MenuBar",
+                                    "auto_id": "MenuBar",
+                                    "runtime_id": [
+                                        42,
+                                        133188,
+                                        3,
+                                        -2147483646,
+                                        30048,
+                                        589997,
+                                        0
+                                    ]
+                                },
+                                {
+                                    "title": "시스템",
+                                    "control_type": "MenuItem",
+                                    "auto_id": "",
+                                    "runtime_id": [
+                                        42,
+                                        133188,
+                                        3,
+                                        -2147483646,
+                                        30048,
+                                        589997,
+                                        1
+                                    ]
+                                }
+                            ],
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "properties": {
+                        "title": "최소화",
+                        "control_type": "Button",
+                        "auto_id": "",
+                        "runtime_id": [
+                            42,
+                            133188,
+                            3,
+                            -2147483647,
+                            133188,
+                            -2,
+                            2
+                        ]
+                    },
+                    "path": [
+                        {
+                            "title": "제목 없음 - 메모장",
+                            "control_type": "Window",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "TitleBar",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188,
+                                3,
+                                -2147483647,
+                                133188,
+                                -2,
+                                0
+                            ]
+                        },
+                        {
+                            "title": "최소화",
+                            "control_type": "Button",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188,
+                                3,
+                                -2147483647,
+                                133188,
+                                -2,
+                                2
+                            ]
+                        }
+                    ],
+                    "children": []
+                },
+                {
+                    "properties": {
+                        "title": "최대화",
+                        "control_type": "Button",
+                        "auto_id": "",
+                        "runtime_id": [
+                            42,
+                            133188,
+                            3,
+                            -2147483647,
+                            133188,
+                            -2,
+                            3
+                        ]
+                    },
+                    "path": [
+                        {
+                            "title": "제목 없음 - 메모장",
+                            "control_type": "Window",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "TitleBar",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188,
+                                3,
+                                -2147483647,
+                                133188,
+                                -2,
+                                0
+                            ]
+                        },
+                        {
+                            "title": "최대화",
+                            "control_type": "Button",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188,
+                                3,
+                                -2147483647,
+                                133188,
+                                -2,
+                                3
+                            ]
+                        }
+                    ],
+                    "children": []
+                },
+                {
+                    "properties": {
+                        "title": "닫기",
+                        "control_type": "Button",
+                        "auto_id": "",
+                        "runtime_id": [
+                            42,
+                            133188,
+                            3,
+                            -2147483647,
+                            133188,
+                            -2,
+                            5
+                        ]
+                    },
+                    "path": [
+                        {
+                            "title": "제목 없음 - 메모장",
+                            "control_type": "Window",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188
+                            ]
+                        },
+                        {
+                            "title": "",
+                            "control_type": "TitleBar",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188,
+                                3,
+                                -2147483647,
+                                133188,
+                                -2,
+                                0
+                            ]
+                        },
+                        {
+                            "title": "닫기",
+                            "control_type": "Button",
+                            "auto_id": "",
+                            "runtime_id": [
+                                42,
+                                133188,
+                                3,
+                                -2147483647,
+                                133188,
+                                -2,
+                                5
+                            ]
+                        }
+                    ],
+                    "children": []
+                }
+            ]
+        }
+    ]
+}
