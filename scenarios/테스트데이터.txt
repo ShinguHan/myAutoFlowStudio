@@ -1,5 +1,0 @@
-username,login_status,error_code
-user_A,Success,
-user_B,Failed,E404
-user_C,Failed,E500
-user_D,Success,

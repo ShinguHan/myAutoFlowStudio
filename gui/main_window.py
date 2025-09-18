@@ -308,11 +308,25 @@ class MainWindow(QMainWindow):
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     scenario_data = json.load(f)
+
+                # --- ✅ 수정/추가된 핵심 로직 ---
+                # 시나리오 데이터 유효성 검사
+                for step in scenario_data:
+                    # 'action' 타입의 스텝은 반드시 'path' 키를 가져야 함
+                    if step.get("type") == "action" and "path" not in step:
+                        log.error(f"Incompatible scenario format: {file_path}. 'path' key is missing.")
+                        QMessageBox.critical(self, "호환성 오류", 
+                                             f"'{os.path.basename(file_path)}' 파일은 더 이상 지원되지 않는 이전 형식입니다.\n\n"
+                                             "UI 요소 탐색기에서 요소를 다시 드래그하여 새 시나리오를 생성해주세요.")
+                        return # 함수 실행 중단
+                # --- 유효성 검사 종료 ---
+
                 self.flow_editor.populate_from_data(scenario_data)
                 log.info(f"Scenario loaded from {file_path}")
             except Exception as e:
                 log.error(f"Failed to load scenario: {e}")
                 QMessageBox.critical(self, "불러오기 실패", f"파일을 읽는 중 오류가 발생했습니다:\n{e}")
+
         
     def update_log_viewer(self, message):
         self.log_viewer.append(message)
