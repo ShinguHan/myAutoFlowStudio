@@ -1,25 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-이 모듈은 AutoFlow Studio의 심장부(Heart)입니다.
-GUI의 시나리오 편집기에서 생성된 데이터(단계 목록)를 입력받아,
-이를 해석하고 pywinauto를 통해 실제 UI 조작을 수행합니다.
-복잡한 중첩 제어 흐름, 동적 변수 처리, 예외 처리, 결과 리포팅 등
-모든 핵심 실행 로직이 여기에 포함됩니다.
-"""
-import time
-import datetime
-import os
-import csv
-import re
-import html
-from pywinauto.application import Application
-# ✅ 추가: ElementNotFoundError를 직접 사용하기 위해 import
+# core/scenario_runner.py
+
+# ... (다른 import 구문들은 그대로 유지) ...
 import pywinauto.findwindows
 from pywinauto.timings import TimeoutError
 from utils.logger_config import log
+import datetime, time, os, csv, re, html
 
-# --- 사용자 정의 예외 클래스 ---
-# 특정 상황에 맞는 명확한 예외를 정의하여 오류 처리를 용이하게 합니다.
+# ... (TargetAppClosedError, VariableNotFoundError 클래스는 그대로 유지) ...
 class TargetAppClosedError(Exception):
     """대상 애플리케이션이 닫혔을 때 발생하는 예외."""
     pass
@@ -29,23 +16,15 @@ class VariableNotFoundError(Exception):
     pass
 
 class ScenarioRunner:
-    """
-    시나리오 데이터를 해석하고 UI 자동화를 단계별로 실행하는 클래스.
-    """
+    # ... (__init__ 및 다른 메서드들은 거의 그대로 유지) ...
     def __init__(self, app_connector):
-        """
-        ScenarioRunner 인스턴스를 초기화합니다.
-
-        Args:
-            app_connector (AppConnector): 이미 앱에 연결된 AppConnector 인스턴스.
-        """
         self.app_connector = app_connector
         if not self.app_connector or not self.app_connector.main_window:
             raise ValueError("A connected AppConnector instance is required.")
         self.main_window = self.app_connector.main_window
-        self.results = None  # 테스트 결과 리포팅 데이터를 저장할 딕셔너리
-        self.runtime_variables = {}  # 'get_text' 등으로 생성된 동적 변수 저장소
-
+        self.results = None
+        self.runtime_variables = {}
+    
     def run_scenario(self, scenario_steps, data_file_path=None):
         """
         전체 시나리오 실행을 시작하고 관리하는 메인 메서드.
@@ -149,70 +128,52 @@ class ScenarioRunner:
                     self._execute_wait(step, data_row, iteration_num)
             
             pc += 1
+            
+    # ✅ *** 핵심 수정: class_name을 검색 조건에 추가 ***
+    def _build_search_criteria(self, props):
+        """UI 속성 딕셔너리로부터 유효한 검색 기준을 생성합니다."""
+        search_criteria = {}
+        # auto_id, class_name 과 같이 더 구체적인 식별자를 우선적으로 사용합니다.
+        if props.get("auto_id"):
+            search_criteria["auto_id"] = props.get("auto_id")
+        if props.get("class_name"): # 이 라인을 추가
+            search_criteria["class_name"] = props.get("class_name")
+        if props.get("control_type"):
+            search_criteria["control_type"] = props.get("control_type")
+        if props.get("title"):
+            search_criteria["title"] = props.get("title")
+        return search_criteria
 
-    # --- 이하 헬퍼 및 실제 실행 메서드들 ---
-    # core/scenario_runner.py
-
-# ... (기존 코드)
-
-# ✅ 추가: 동적 UI 탐색을 위한 새로운 헬퍼 메서드
     def _find_element_dynamically(self, path):
-        """
-        주어진 경로(path)를 따라가며 동적으로 UI 요소를 찾습니다.
-        안정적인 식별자(auto_id, control_type)를 우선 사용하고, 검색 조건을 명확히 하여 안정성을 극대화합니다.
-        """
         log.debug(f"Starting dynamic element search with path of length {len(path)}")
-        current_element = self.main_window
+        # [FIX] 변수 이름을 '명세서'임을 명확히 하고, WindowSpecification 객체로 유지합니다.
+        current_element_spec = self.main_window
 
-        # 경로의 마지막 요소(실제 타겟)를 제외한 부모 요소들을 먼저 순회합니다.
-        for i, parent_props in enumerate(path[:-1]):
-            search_criteria = {}
-            # 💡 핵심 개선: auto_id, control_type, title 순으로 안정적인 식별자를 우선 사용합니다.
-            # 또한, 값이 비어있지 않은 유효한 속성만 검색 조건으로 사용합니다.
-            if parent_props.get("auto_id"):
-                search_criteria["auto_id"] = parent_props.get("auto_id")
-            if parent_props.get("control_type"):
-                search_criteria["control_type"] = parent_props.get("control_type")
-            if parent_props.get("title"):
-                search_criteria["title"] = parent_props.get("title")
+        for i, props in enumerate(path[1:]):
+            path_index = i + 1
+            search_criteria = self._build_search_criteria(props)
 
             if not search_criteria:
-                raise ValueError(f"Path step {i} has no valid identifiers: {parent_props}")
+                raise ValueError(f"Path step {path_index} has no valid identifiers: {props}")
 
             try:
-                log.debug(f"Searching for parent element: {search_criteria}")
-                # 💡 핵심 개선: 타임아웃을 10초로 늘려 안정성 확보
-                child = current_element.child_window(**search_criteria).wait('exists', timeout=10)
-                current_element = child
+                log.debug(f"Appending spec at path index {path_index}: {search_criteria}")
+                # [FIX] 명세서에 자식 조건을 추가하여 계속해서 명세서를 구체화합니다.
+                # 발견된 요소를 재할당하는 것이 아니라, 명세서 자체를 업데이트합니다.
+                current_element_spec = current_element_spec.child_window(**search_criteria)
+                
+                # [FIX] 구체화된 명세서가 유효한지(실제로 요소가 존재하는지) 확인만 합니다.
+                # 이 호출은 객체의 타입을 바꾸지 않습니다.
+                current_element_spec.wait('exists', timeout=10)
 
-                # 탭(Tab) 컨트롤을 만나면 선택하여 하위 요소가 로드되도록 합니다.
-                if parent_props.get("control_type") == "TabItem" and not current_element.is_selected():
-                    log.info(f"Path traversal: Selecting TabItem '{parent_props.get('title')}'")
-                    current_element.select()
-                    # 💡 핵심 개선: 불안정한 time.sleep() 대신, 다음 루프의 wait()가 로딩을 기다려줍니다.
+            except (TimeoutError, pywinauto.findwindows.ElementNotFoundError, pywinauto.findwindows.ElementAmbiguousError) as e:
+                log.error(f"Could not find element in path at step {path_index}: {props.get('title')}", exc_info=True)
+                raise e
+        
+        # 최종적으로 완성된 전체 경로의 '명세서'를 반환합니다.
+        return current_element_spec
 
-            except (TimeoutError, pywinauto.findwindows.ElementNotFoundError) as e:
-                log.error(f"Could not find parent element in path at step {i}: {parent_props.get('title')}", exc_info=True)
-                raise e # 원본 예외를 그대로 다시 발생시켜 상세 정보를 유지합니다.
-
-        # 마지막으로, 최종 타겟 요소를 찾습니다.
-        final_target_props = path[-1]
-        final_search_criteria = {}
-        if final_target_props.get("auto_id"):
-            final_search_criteria["auto_id"] = final_target_props.get("auto_id")
-        if final_target_props.get("control_type"):
-            final_search_criteria["control_type"] = final_target_props.get("control_type")
-        if final_target_props.get("title"):
-            final_search_criteria["title"] = final_target_props.get("title")
-
-        if not final_search_criteria:
-            raise ValueError(f"Final target has no valid identifiers: {final_target_props}")
-
-        log.debug(f"Searching for final target: {final_search_criteria} within parent '{current_element.window_text()}'")
-        # 최종 타겟을 반환합니다.
-        return current_element.child_window(**final_search_criteria)
-
-    # ✅ 수정: _find_element_dynamically를 사용하도록 로직 변경
+    # ... (나머지 모든 함수는 이전 버전과 동일하게 유지) ...
     def _execute_action(self, step, data_row, iteration_num):
         """단일 'action' 스텝을 실행합니다. 재시도, 오류 처리 로직을 포함합니다."""
         start_time = time.time()
