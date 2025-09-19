@@ -105,61 +105,27 @@ class AppConnector:
             return ui_tree
         except Exception as e:
             log.error(f"An error occurred during the deep scan: {e}", exc_info=True)
-            return None
+        
+        
 
     def refresh_subtree(self, path, max_depth=5):
-        if not self.main_window:
-            log.warning("Cannot refresh subtree. No application is connected.")
-            return None
-        
+        if not self.main_window: return None
         try:
-            target_spec = self.main_window
-            for props in path[1:]:
-                search_criteria = {k: v for k, v in props.items() if k != 'runtime_id' and v}
-                if not search_criteria:
-                    raise ValueError(f"Invalid path segment: {props}")
-                target_spec = target_spec.child_window(**search_criteria)
-            
-            target_element = target_spec.wrapper_object()
-            
-            log.info(f"Found element. Attempting to reveal children.")
-            
-            # ✅ **진짜 최종 수정 (검증 완료): hasattr()로 Wrapper 객체의 메서드 존재 여부 직접 확인**
-            if self.backend == 'uia':
-                # '리모컨'(target_element) 자체에 expand/invoke 메서드가 있는지 직접 확인
-                if hasattr(target_element, 'expand'):
-                    try:
-                        target_element.expand()
-                        log.debug("Expanded the element.")
-                    except Exception as e:
-                        log.warning(f"Could not expand element (maybe already expanded): {e}")
-                elif hasattr(target_element, 'invoke'):
-                    try:
-                        target_element.invoke()
-                        log.debug("Invoked the element.")
-                    except Exception as e:
-                        log.warning(f"Could not invoke element: {e}")
-            else:  # win32 백엔드
-                if hasattr(target_element, 'click'):
-                    try:
-                        target_element.click()
-                        log.debug("Clicked the win32 element.")
-                    except Exception as e:
-                        log.warning(f"Could not click win32 element: {e}")
+            # ✅ [수정] 모호성 해결을 위해 find_element 사용
+            target_element = findwindows.find_element(backend=self.backend, top_level_only=False, path=path)
+            wrapper = self.backend.generic_wrapper_class(target_element)
 
+            log.info(f"Found element '{self._get_element_name(wrapper)}'. Revealing children.")
+            
+            if hasattr(wrapper, 'expand'): wrapper.expand()
+            elif hasattr(wrapper, 'invoke'): wrapper.invoke()
             time.sleep(0.5)
 
             children_nodes = []
-            for child in target_element.children():
+            for child in wrapper.children():
                 node = self._build_tree_recursively(child, 0, max_depth, path)
-                if node:
-                    children_nodes.append(node)
-            
+                if node: children_nodes.append(node)
             return children_nodes
-
-        except findwindows.ElementNotFoundError:
-             log.error("Refresh failed: Target element not found.")
-             return None
         except Exception as e:
             log.error(f"An error occurred while refreshing subtree: {e}", exc_info=True)
             return None
@@ -209,61 +175,63 @@ class AppConnector:
         else: # win32
             return element.window_text()
 
+    def _extract_properties(self, element):
+        if self.backend == 'uia':
+            return self._extract_properties_uia(element.element_info)
+        else: # win32
+            return self._extract_properties_win32(element)
+        
     def _build_tree_recursively(self, element, current_depth, max_depth, path=None):
         if path is None: path = []
         if not element or current_depth > max_depth: return None
 
         try:
-            if self.backend == 'uia':
-                element_props = self._extract_properties_uia(element.element_info)
-            else:
-                element_props = self._extract_properties_win32(element)
+            element_props = self._extract_properties(element)
         except Exception:
-            return None # 속성 추출 불가 시 해당 요소는 스킵
+            return None
 
         current_path = path + [element_props]
         node = { "properties": element_props, "path": current_path, "children": [] }
 
         element_id = self._get_element_id(element)
-        # 아직 상호작용하지 않은 요소에 대해서만 1회 시도
         if element_id not in self.interacted_ids:
-            try:
-                interacted = False
-                # 1순위: TabItem, ListItem 등 '선택' 가능한 요소 처리
-                if hasattr(element, 'select'):
-                    log.debug(f"Selecting: '{self._get_element_name(element)}'")
-                    element.select()
-                    interacted = True
-                # 2순위: Tree 등 '확장' 가능한 요소 처리
-                elif hasattr(element, 'expand'):
-                    log.debug(f"Expanding: '{self._get_element_name(element)}'")
-                    element.expand()
-                    interacted = True
-                # 3순위: Menu 등 '호출' 가능한 요소 처리
-                elif hasattr(element, 'invoke'):
-                    log.debug(f"Invoking: '{self._get_element_name(element)}'")
-                    element.invoke()
-                    interacted = True
-                
-                if interacted:
-                    self.interacted_ids.add(element_id)
-                    time.sleep(0.3) # UI가 탭 전환 등 변경에 반응할 시간
-            except Exception as e:
-                log.warning(f"Interaction on element failed (safe to ignore): {e}")
-        # --- 탐색 로직 끝 ---
-
-        # 2. 문이 열린 후, 보이는 모든 자식 요소를 가져와 재귀적으로 탐색
-        try:
-            child_elements = element.children()
-        except Exception:
-            child_elements = []
+            self.interacted_ids.add(element_id)
             
-        for child in child_elements:
+            # ✅ [수정] 자식 요소들에게 상호작용을 시도하는 방식으로 변경
+            try:
+                for child in element.children():
+                    child_id = self._get_element_id(child)
+                    if child_id in self.interacted_ids: continue
+                    
+                    if hasattr(child, 'select'):
+                        log.debug(f"Selecting child: '{self._get_element_name(child)}'")
+                        child.select()
+                        self.interacted_ids.add(child_id)
+                        time.sleep(0.2) # 탭 전환 시간
+            except Exception:
+                pass # 자식이 없거나 상호작용 실패 시 안전하게 무시
+
+            # 부모 요소에 대한 상호작용 (메뉴 등)
+            try:
+                if hasattr(element, 'expand'):
+                    element.expand()
+                elif hasattr(element, 'invoke'):
+                    element.invoke()
+                time.sleep(0.2)
+            except Exception:
+                pass
+
+        try:
+            final_child_elements = element.children()
+        except Exception:
+            final_child_elements = []
+            
+        for child in final_child_elements:
             child_node = self._build_tree_recursively(child, current_depth + 1, max_depth, current_path)
             if child_node:
                 node["children"].append(child_node)
-                
         return node
+
 
     def _extract_properties_uia(self, element_info):
         return {
