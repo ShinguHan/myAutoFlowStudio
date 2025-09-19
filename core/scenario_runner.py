@@ -1,12 +1,23 @@
-# core/scenario_runner.py
-
-# ... (다른 import 구문들은 그대로 유지) ...
+# -*- coding: utf-8 -*-
+"""
+이 모듈은 AutoFlow Studio의 심장부(Heart)입니다.
+GUI의 시나리오 편집기에서 생성된 데이터(단계 목록)를 입력받아,
+이를 해석하고 pywinauto를 통해 실제 UI 조작을 수행합니다.
+복잡한 중첩 제어 흐름, 동적 변수 처리, 예외 처리, 결과 리포팅 등
+모든 핵심 실행 로직이 여기에 포함됩니다.
+"""
+import time
+import datetime
+import os
+import csv
+import re
+import html
+from pywinauto.application import Application
 import pywinauto.findwindows
-from pywinauto.timings import TimeoutError
+from pywinauto.timings import TimeoutError, wait_until_passes
 from utils.logger_config import log
-import datetime, time, os, csv, re, html
 
-# ... (TargetAppClosedError, VariableNotFoundError 클래스는 그대로 유지) ...
+# --- 사용자 정의 예외 클래스 ---
 class TargetAppClosedError(Exception):
     """대상 애플리케이션이 닫혔을 때 발생하는 예외."""
     pass
@@ -16,7 +27,9 @@ class VariableNotFoundError(Exception):
     pass
 
 class ScenarioRunner:
-    # ... (__init__ 및 다른 메서드들은 거의 그대로 유지) ...
+    """
+    시나리오 데이터를 해석하고 UI 자동화를 단계별로 실행하는 클래스.
+    """
     def __init__(self, app_connector):
         self.app_connector = app_connector
         if not self.app_connector or not self.app_connector.main_window:
@@ -24,12 +37,8 @@ class ScenarioRunner:
         self.main_window = self.app_connector.main_window
         self.results = None
         self.runtime_variables = {}
-    
+
     def run_scenario(self, scenario_steps, data_file_path=None):
-        """
-        전체 시나리오 실행을 시작하고 관리하는 메인 메서드.
-        데이터 기반 테스트인 경우, CSV의 각 행에 대해 시나리오를 반복 실행합니다.
-        """
         self.runtime_variables.clear()
         self.results = {
             "summary": {
@@ -72,9 +81,10 @@ class ScenarioRunner:
             self.results["summary"]["failed_steps"] = len([s for s in self.results["steps"] if s["status"] == "failure"])
 
     def _execute_steps(self, steps, data_row=None, iteration_num=1):
-        """
-        스택 원리를 이용하여 중첩된 제어 흐름을 해석하고 실행하는 핵심 로직.
-        """
+        # ✅ *** 핵심 수정: 스텝 실행 전, 항상 메인 창에 포커스를 줍니다. ***
+        log.debug("Setting focus to the main window before executing steps.")
+        self.main_window.set_focus()
+        
         pc = 0
         while pc < len(steps):
             self._check_app_is_alive()
@@ -128,15 +138,12 @@ class ScenarioRunner:
                     self._execute_wait(step, data_row, iteration_num)
             
             pc += 1
-            
-    # ✅ *** 핵심 수정: class_name을 검색 조건에 추가 ***
+
     def _build_search_criteria(self, props):
-        """UI 속성 딕셔너리로부터 유효한 검색 기준을 생성합니다."""
         search_criteria = {}
-        # auto_id, class_name 과 같이 더 구체적인 식별자를 우선적으로 사용합니다.
         if props.get("auto_id"):
             search_criteria["auto_id"] = props.get("auto_id")
-        if props.get("class_name"): # 이 라인을 추가
+        if props.get("class_name"):
             search_criteria["class_name"] = props.get("class_name")
         if props.get("control_type"):
             search_criteria["control_type"] = props.get("control_type")
@@ -145,37 +152,57 @@ class ScenarioRunner:
         return search_criteria
 
     def _find_element_dynamically(self, path):
-        log.debug(f"Starting dynamic element search with path of length {len(path)}")
-        # [FIX] 변수 이름을 '명세서'임을 명확히 하고, WindowSpecification 객체로 유지합니다.
-        current_element_spec = self.main_window
+        """
+        [Final Version] descendants를 사용하여 모호성 없이 가장 정확하게 요소를 찾습니다.
+        """
+        if not path:
+            raise ValueError("Path cannot be empty.")
 
-        for i, props in enumerate(path[1:]):
-            path_index = i + 1
-            search_criteria = self._build_search_criteria(props)
-
-            if not search_criteria:
-                raise ValueError(f"Path step {path_index} has no valid identifiers: {props}")
-
-            try:
-                log.debug(f"Appending spec at path index {path_index}: {search_criteria}")
-                # [FIX] 명세서에 자식 조건을 추가하여 계속해서 명세서를 구체화합니다.
-                # 발견된 요소를 재할당하는 것이 아니라, 명세서 자체를 업데이트합니다.
-                current_element_spec = current_element_spec.child_window(**search_criteria)
-                
-                # [FIX] 구체화된 명세서가 유효한지(실제로 요소가 존재하는지) 확인만 합니다.
-                # 이 호출은 객체의 타입을 바꾸지 않습니다.
-                current_element_spec.wait('exists', timeout=10)
-
-            except (TimeoutError, pywinauto.findwindows.ElementNotFoundError, pywinauto.findwindows.ElementAmbiguousError) as e:
-                log.error(f"Could not find element in path at step {path_index}: {props.get('title')}", exc_info=True)
-                raise e
+        target_props = path[-1]
+        search_criteria = self._build_search_criteria(target_props)
         
-        # 최종적으로 완성된 전체 경로의 '명세서'를 반환합니다.
-        return current_element_spec
+        log.debug(f"Searching for descendants matching: {search_criteria}")
 
-    # ... (나머지 모든 함수는 이전 버전과 동일하게 유지) ...
+        candidates = self.main_window.descendants(**search_criteria)
+
+        if not candidates:
+            raise pywinauto.findwindows.ElementNotFoundError(f"No element found for criteria: {search_criteria}")
+        
+        if len(candidates) == 1:
+            log.debug("Found unique element.")
+            return candidates[0]
+
+        log.warning(f"Found {len(candidates)} ambiguous elements. Verifying with full path...")
+        
+        path_without_runtime_id = [{k: v for k, v in props.items() if k != 'runtime_id'} for props in path]
+
+        for candidate in candidates:
+            candidate_path_elements = []
+            parent = candidate
+            while parent:
+                candidate_path_elements.insert(0, parent)
+                try:
+                    parent = parent.parent()
+                except Exception:
+                    break
+            
+            candidate_path_props = []
+            for elem in candidate_path_elements:
+                info = elem.element_info
+                candidate_path_props.append({
+                    'title': info.name,
+                    'class_name': info.class_name,
+                    'control_type': info.control_type,
+                    'auto_id': info.automation_id
+                })
+
+            if candidate_path_props == path_without_runtime_id:
+                log.info(f"Path verification successful. Unique element found: {target_props.get('title')}")
+                return candidate
+
+        raise pywinauto.findwindows.ElementNotFoundError(f"Could not find a unique element for path: {path}")
+
     def _execute_action(self, step, data_row, iteration_num):
-        """단일 'action' 스텝을 실행합니다. 재시도, 오류 처리 로직을 포함합니다."""
         start_time = time.time()
         on_error_policy = step.get("onError", {"method": "stop"})
         attempts = on_error_policy.get("retries", 3) if on_error_policy["method"] == "retry" else 1
@@ -192,12 +219,17 @@ class ScenarioRunner:
                 
                 element = self._find_element_dynamically(path)
                 
-                element.wait('exists enabled visible ready', timeout=10)
+                log.debug(f"Waiting for element '{element.element_info.name}' to be ready...")
+                wait_until_passes(10, 0.5, lambda: (element.is_visible() and element.is_enabled()))
+                log.debug("Element is ready.")
                 
+                # ✅ *** 핵심 수정: 'toggle' 액션 추가 ***
                 if action == "click":
                     element.click_input()
                 elif action == "double_click":
                     element.double_click_input()
+                elif action == "toggle": # 체크박스 전용 액션
+                    element.toggle()
                 elif action == "set_text":
                     text_to_set = self._resolve_variables(params.get("text", ""), data_row)
                     element.set_edit_text(text_to_set)
@@ -222,7 +254,6 @@ class ScenarioRunner:
             log.warning("Error occurred but continuing scenario as per policy.")
 
     def _execute_wait(self, step, data_row, iteration_num):
-        """'wait_for_condition' 스텝을 실행합니다."""
         start_time = time.time()
         try:
             condition = step.get("condition", {})
@@ -244,7 +275,6 @@ class ScenarioRunner:
             raise
 
     def _check_condition(self, condition):
-        """'if_condition'의 조건이 참인지 거짓인지 확인합니다."""
         condition_type = condition.get("type")
         target = condition.get("target")
         resolved_target = {k: self._resolve_variables(v, None) for k, v in target.items() if v}
@@ -261,12 +291,10 @@ class ScenarioRunner:
         return False
 
     def _check_app_is_alive(self):
-        """대상 앱이 여전히 활성 상태인지 확인합니다."""
         if not self.main_window or not self.main_window.exists():
             raise TargetAppClosedError("대상 애플리케이션이 닫혔거나 응답하지 않습니다.")
 
     def _resolve_variables(self, text, data_row):
-        """동적 변수와 CSV 변수를 사용하여 텍스트 내 플레이스홀더를 치환합니다."""
         if (data_row is None and not self.runtime_variables) or not isinstance(text, str):
             return text
 
@@ -281,7 +309,6 @@ class ScenarioRunner:
         return re.sub(r"\{\{\s*(.*?)\s*\}\}", replacer, text)
 
     def _find_matching_end(self, steps, start_index, start_kw, end_kw):
-        """중첩을 고려하여 제어 블록의 짝이 맞는 끝을 찾습니다."""
         depth = 1
         for i in range(start_index + 1, len(steps)):
             step = steps[i]
@@ -296,7 +323,6 @@ class ScenarioRunner:
         raise SyntaxError(f"Mismatched control block: No matching '{end_kw}' found for '{start_kw}' at index {start_index}")
     
     def _find_else_or_end_if(self, steps, start_index):
-        """IF 블록의 ELSE 또는 END IF를 찾습니다."""
         depth = 1
         for i in range(start_index + 1, len(steps)):
             step = steps[i]
@@ -313,7 +339,6 @@ class ScenarioRunner:
         raise SyntaxError(f"Mismatched control block: No matching 'end_if' found for 'if_condition' at index {start_index}")
 
     def _find_catch_or_end_try(self, steps, start_index):
-        """TRY 블록의 CATCH 또는 END TRY를 찾습니다."""
         depth = 1
         for i in range(start_index + 1, len(steps)):
             step = steps[i]
@@ -330,7 +355,6 @@ class ScenarioRunner:
         raise SyntaxError(f"Mismatched control block: No matching 'try_catch_end' found for 'try_catch_start' at index {start_index}")
 
     def _get_step_description(self, step_data):
-        """리포팅을 위해 시나리오 데이터로부터 사람이 읽기 쉬운 설명을 생성합니다."""
         description = "Unknown Step"
         step_type = step_data.get("type")
         params = step_data.get("params", {})
@@ -363,7 +387,6 @@ class ScenarioRunner:
 
 
     def _record_step_result(self, step, start_time, status, iteration_num, details=""):
-        """실행 결과를 리포트용 데이터 구조에 기록합니다."""
         end_time = time.time()
         duration = round(end_time - start_time, 2)
         description = self._get_step_description(step)
@@ -378,7 +401,6 @@ class ScenarioRunner:
         })
     
     def generate_html_report(self, report_dir="reports"):
-        """HTML 결과 보고서를 생성합니다."""
         if not self.results:
             return None
         
@@ -461,3 +483,4 @@ class ScenarioRunner:
         except Exception as e:
             log.error(f"Failed to generate HTML report: {e}")
             return None
+
