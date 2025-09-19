@@ -176,8 +176,10 @@ class AppConnector:
 
     def _extract_properties(self, element_info):
         """pywinauto의 element_info 객체에서 필요한 속성만 추출합니다."""
+        # ✅ *** 핵심 수정: class_name을 추가로 추출합니다 ***
         return {
             "title": element_info.name,
+            "class_name": element_info.class_name, # 이 라인을 추가
             "control_type": element_info.control_type,
             "auto_id": element_info.automation_id,
             "runtime_id": element_info.runtime_id
