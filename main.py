@@ -3,8 +3,8 @@ import sys
 import os
 
 # --- 환경 변수 설정 (QApplication 생성 전) ---
-os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
-os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
 # ---------------------------------------------
 
 from PyQt6.QtWidgets import QApplication
