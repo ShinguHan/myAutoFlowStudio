@@ -85,21 +85,26 @@ class AppConnector:
             log.error(f"Failed to get list of connectable windows: {e}")
             return []
 
+
     def get_ui_tree(self, max_depth=20):
         if not self.main_window:
             log.warning("Cannot get UI tree because no application is connected.")
             return None
-        
         try:
-            log.info(f"Building UI tree (max_depth={max_depth})...")
+            log.info(f"🚀 Starting Interactive Deep Scan (max_depth={max_depth}). This may take a while...")
             self.main_window.set_focus()
+            
+            # 탐색 중 상호작용한 요소를 기록하여 무한 루프 방지
+            self.interacted_ids = set() 
+            
             ui_tree = self._build_tree_recursively(self.main_window, 0, max_depth)
             
             if ui_tree:
                 self._save_tree_to_cache(ui_tree)
+                log.info("✅ Interactive Deep Scan complete. UI tree has been saved to cache.")
             return ui_tree
         except Exception as e:
-            log.error(f"An error occurred while building the UI tree: {e}", exc_info=True)
+            log.error(f"An error occurred during the deep scan: {e}", exc_info=True)
             return None
 
     def refresh_subtree(self, path, max_depth=5):
@@ -190,6 +195,20 @@ class AppConnector:
             log.error(f"Failed to load UI tree from cache: {e}")
             return None
     
+    def _get_element_id(self, element):
+        """백엔드에 상관없이 요소의 고유 식별자를 반환합니다."""
+        if self.backend == 'uia':
+            return element.element_info.runtime_id
+        else: # win32
+            return element.handle
+
+    def _get_element_name(self, element):
+        """백엔드에 상관없이 요소의 이름을 반환합니다."""
+        if self.backend == 'uia':
+            return element.element_info.name
+        else: # win32
+            return element.window_text()
+
     def _build_tree_recursively(self, element, current_depth, max_depth, path=None):
         if path is None: path = []
         if not element or current_depth > max_depth: return None
@@ -197,24 +216,53 @@ class AppConnector:
         try:
             if self.backend == 'uia':
                 element_props = self._extract_properties_uia(element.element_info)
-            else: # win32
+            else:
                 element_props = self._extract_properties_win32(element)
         except Exception:
-            return None
+            return None # 속성 추출 불가 시 해당 요소는 스킵
 
         current_path = path + [element_props]
         node = { "properties": element_props, "path": current_path, "children": [] }
 
+        element_id = self._get_element_id(element)
+        # 아직 상호작용하지 않은 요소에 대해서만 1회 시도
+        if element_id not in self.interacted_ids:
+            try:
+                interacted = False
+                # 1순위: TabItem, ListItem 등 '선택' 가능한 요소 처리
+                if hasattr(element, 'select'):
+                    log.debug(f"Selecting: '{self._get_element_name(element)}'")
+                    element.select()
+                    interacted = True
+                # 2순위: Tree 등 '확장' 가능한 요소 처리
+                elif hasattr(element, 'expand'):
+                    log.debug(f"Expanding: '{self._get_element_name(element)}'")
+                    element.expand()
+                    interacted = True
+                # 3순위: Menu 등 '호출' 가능한 요소 처리
+                elif hasattr(element, 'invoke'):
+                    log.debug(f"Invoking: '{self._get_element_name(element)}'")
+                    element.invoke()
+                    interacted = True
+                
+                if interacted:
+                    self.interacted_ids.add(element_id)
+                    time.sleep(0.3) # UI가 탭 전환 등 변경에 반응할 시간
+            except Exception as e:
+                log.warning(f"Interaction on element failed (safe to ignore): {e}")
+        # --- 탐색 로직 끝 ---
+
+        # 2. 문이 열린 후, 보이는 모든 자식 요소를 가져와 재귀적으로 탐색
         try:
             child_elements = element.children()
         except Exception:
             child_elements = []
-
+            
         for child in child_elements:
             child_node = self._build_tree_recursively(child, current_depth + 1, max_depth, current_path)
             if child_node:
                 node["children"].append(child_node)
-        
+                
         return node
 
     def _extract_properties_uia(self, element_info):
