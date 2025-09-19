@@ -7,7 +7,7 @@ import os
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QLineEdit, QSplitter, QFileDialog, QToolBar,
-    QMessageBox, QTextEdit, QGroupBox
+    QMessageBox, QTextEdit, QGroupBox, QComboBox, QTreeWidgetItem
 )
 from PyQt6.QtGui import QAction, QTextCursor, QShortcut, QKeySequence
 from PyQt6.QtCore import QThread, pyqtSignal, Qt
@@ -19,6 +19,31 @@ from gui.widgets.flow_editor import FlowEditor
 from gui.widgets.parallel_runner import ParallelRunnerPanel
 from utils.logger_config import log, qt_log_handler
 from utils.error_handler import translate_exception
+
+class AppComboBox(QComboBox):
+    aboutToShowPopup = pyqtSignal()
+    def showPopup(self):
+        self.aboutToShowPopup.emit()
+        super().showPopup()
+
+# ✅ *** 새로고침 워커 추가 ***
+class RefreshWorker(QThread):
+    finished = pyqtSignal(list)
+
+    def __init__(self, title_re, path_to_refresh):
+        super().__init__()
+        self.title_re = title_re
+        self.path = path_to_refresh
+        self.connector = AppConnector()
+
+    def run(self):
+        # 새로고침을 위해 현재 대상 앱에 다시 연결
+        if self.connector.connect_to_app(title_re=self.title_re):
+            refreshed_children = self.connector.refresh_subtree(self.path)
+            self.finished.emit(refreshed_children or [])
+        else:
+            log.error(f"Could not reconnect to app '{self.title_re}' for refresh.")
+            self.finished.emit([])
 
 class ConnectorWorker(QThread):
     finished = pyqtSignal(object)
@@ -36,7 +61,6 @@ class ConnectorWorker(QThread):
                 ui_tree = self.connector.load_tree_from_cache()
             else:
                 ui_tree = self.connector.get_ui_tree()
-            
             self.finished.emit(ui_tree)
         else:
             self.finished.emit(None)
@@ -78,8 +102,10 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 1800, 1000)
         
         self.connector_worker = None
+        self.refresh_worker = None
         self.running_workers = {}
         self.log_monitor_worker = None
+        self.item_to_refresh = None
 
         self._create_actions()
         self._create_toolbars()
@@ -133,8 +159,11 @@ class MainWindow(QMainWindow):
         toolbar = QToolBar("Main Toolbar")
         self.addToolBar(toolbar)
         
-        self.target_app_input = QLineEdit()
-        self.target_app_input.setPlaceholderText("연결할 앱 창 제목 (정규식 가능)")
+        self.target_app_input = AppComboBox()
+        self.target_app_input.setEditable(True)
+        self.target_app_input.setPlaceholderText("연결할 앱 창 제목 선택 또는 입력 (정규식 가능)")
+        self.target_app_input.setMinimumWidth(300)
+
         toolbar.addWidget(QLabel("대상 앱: "))
         toolbar.addWidget(self.target_app_input)
         toolbar.addAction(self.connect_action)
@@ -169,6 +198,8 @@ class MainWindow(QMainWindow):
         return panel
 
     def _connect_signals(self):
+        self.target_app_input.aboutToShowPopup.connect(self.populate_running_apps)
+        
         self.connect_action.triggered.connect(self.start_ui_analysis)
         self.run_scenario_action.triggered.connect(self.run_main_scenario)
         self.add_loop_action.triggered.connect(self.flow_editor.add_loop_block)
@@ -183,24 +214,62 @@ class MainWindow(QMainWindow):
         self.parallel_runner_panel.run_request_from_slot.connect(self.run_parallel_scenario)
         self.flow_editor.selectionChanged.connect(self.update_group_action_state)
         self.monitor_toggle_btn.clicked.connect(self.toggle_log_monitor)
+        
+        # ✅ *** 새로고침 시그널 연결 ***
         self.ui_tree_view.refresh_request.connect(self.on_ui_tree_refresh_request)
 
+    def populate_running_apps(self):
+        log.info("Fetching list of running applications...")
+        current_text = self.target_app_input.currentText()
+        self.target_app_input.clear()
+        window_titles = AppConnector.get_connectable_windows()
+        self.target_app_input.addItems(window_titles)
+        if current_text:
+            self.target_app_input.setCurrentText(current_text)
+        log.info(f"Found {len(window_titles)} connectable windows.")
+
+    # ✅ *** 새로고침 요청 처리 슬롯 ***
     def on_ui_tree_refresh_request(self, item):
-        log.warning("Refresh functionality is not fully implemented yet.")
+        node_data = item.data(0, Qt.ItemDataRole.UserRole)
+        if not node_data: return
+
+        path = node_data.get("path")
+        if not path: return
+
+        # 새로고침을 위해 현재 대상 앱의 제목이 필요
+        target_title = self.target_app_input.currentText()
+        if not target_title:
+            QMessageBox.warning(self, "오류", "새로고침을 위해 대상 앱이 먼저 선택되어야 합니다.")
+            return
+
+        self.item_to_refresh = item
+        log.info(f"Starting subtree refresh for: {node_data.get('properties', {}).get('title')}")
+        
+        self.refresh_worker = RefreshWorker(target_title, path)
+        self.refresh_worker.finished.connect(self.on_refresh_finished)
+        self.refresh_worker.start()
+
+    # ✅ *** 새로고침 완료 처리 슬롯 ***
+    def on_refresh_finished(self, children_data):
+        if self.item_to_refresh:
+            if children_data:
+                log.info(f"Refresh successful. Updating {len(children_data)} child items.")
+                self.ui_tree_view.update_item_children(self.item_to_refresh, children_data)
+            else:
+                log.warning("Refresh finished, but no child elements were found.")
+                self.ui_tree_view.update_item_children(self.item_to_refresh, [])
+        self.item_to_refresh = None
 
     def _create_shortcuts(self):
         transfer_shortcut = QShortcut(QKeySequence("Alt+Right"), self)
         transfer_shortcut.setContext(Qt.ShortcutContext.WindowShortcut)
         transfer_shortcut.activated.connect(self.transfer_selected_ui_element)
 
-    # ✅ 핵심 수정: 호출하는 메서드 이름을 변경합니다.
     def transfer_selected_ui_element(self):
-        """UITreeView에서 선택된 요소를 FlowEditor로 전달하는 슬롯 메서드."""
         if not self.ui_tree_view.tree_widget.hasFocus():
             return
             
         log.debug("Alt+Right shortcut activated.")
-        # get_selected_element_properties -> get_selected_node_data
         node_data = self.ui_tree_view.get_selected_node_data()
         
         if node_data:
@@ -211,7 +280,7 @@ class MainWindow(QMainWindow):
             log.debug("No element selected in UI Tree to transfer.")
     
     def start_ui_analysis(self):
-        target_title = self.target_app_input.text()
+        target_title = self.target_app_input.currentText()
         if not target_title:
             QMessageBox.warning(self, "입력 오류", "대상 앱의 창 제목을 입력해주세요.")
             return
@@ -252,7 +321,7 @@ class MainWindow(QMainWindow):
         self.run_parallel_scenario(0, main_scenario_data, None)
 
     def run_parallel_scenario(self, slot_index, scenario_data, data_path):
-        target_title = self.target_app_input.text()
+        target_title = self.target_app_input.currentText()
         if not target_title:
             QMessageBox.warning(self, "연결 오류", "병렬 실행을 위해 메인 툴바의 '대상 앱'을 먼저 지정해야 합니다.")
             return
@@ -309,18 +378,14 @@ class MainWindow(QMainWindow):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     scenario_data = json.load(f)
 
-                # --- ✅ 수정/추가된 핵심 로직 ---
-                # 시나리오 데이터 유효성 검사
                 for step in scenario_data:
-                    # 'action' 타입의 스텝은 반드시 'path' 키를 가져야 함
                     if step.get("type") == "action" and "path" not in step:
                         log.error(f"Incompatible scenario format: {file_path}. 'path' key is missing.")
                         QMessageBox.critical(self, "호환성 오류", 
                                              f"'{os.path.basename(file_path)}' 파일은 더 이상 지원되지 않는 이전 형식입니다.\n\n"
                                              "UI 요소 탐색기에서 요소를 다시 드래그하여 새 시나리오를 생성해주세요.")
-                        return # 함수 실행 중단
-                # --- 유효성 검사 종료 ---
-
+                        return
+                
                 self.flow_editor.populate_from_data(scenario_data)
                 log.info(f"Scenario loaded from {file_path}")
             except Exception as e:
@@ -372,3 +437,4 @@ class MainWindow(QMainWindow):
                 log.warning(f"Trigger activated, but no scenario loaded in slot #{slot_index_to_run + 1}.")
         except ValueError as e:
             log.error(f"Invalid trigger slot number: {e}")
+
