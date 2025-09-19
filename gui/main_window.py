@@ -45,22 +45,23 @@ class RefreshWorker(QThread):
             log.error(f"Could not reconnect to app '{self.title_re}' for refresh.")
             self.finished.emit([])
 
+# ConnectorWorker 클래스도 수정 필요
 class ConnectorWorker(QThread):
     finished = pyqtSignal(object)
 
-    def __init__(self, title_re, mode='scan'):
+    def __init__(self, app_connector, title_re, mode='scan'):
         super().__init__()
+        self.app_connector = app_connector
         self.title_re = title_re
         self.mode = mode
-        self.connector = AppConnector()
 
     def run(self):
-        if self.connector.connect_to_app(title_re=self.title_re):
+        if self.app_connector.connect_to_app(title_re=self.title_re):
             ui_tree = None
-            if self.mode == 'load_cache':
-                ui_tree = self.connector.load_tree_from_cache()
+            if self.mode == 'load_cache' and self.app_connector.has_cache():
+                ui_tree = self.app_connector.load_tree_from_cache()
             else:
-                ui_tree = self.connector.get_ui_tree()
+                ui_tree = self.app_connector.get_ui_tree()
             self.finished.emit(ui_tree)
         else:
             self.finished.emit(None)
@@ -68,10 +69,11 @@ class ConnectorWorker(QThread):
 class ScenarioWorker(QThread):
     finished = pyqtSignal(int, str, str)
 
-    def __init__(self, slot_index, title_re, scenario_data, data_path=None):
+    # ✅ [수정] title_re 대신, 연결에 성공한 app_connector 객체를 직접 받음
+    def __init__(self, slot_index, app_connector, scenario_data, data_path=None):
         super().__init__()
         self.slot_index = slot_index
-        self.title_re = title_re
+        self.app_connector = app_connector # ✅ app_connector 저장
         self.scenario_data = scenario_data
         self.data_path = data_path
 
@@ -79,27 +81,31 @@ class ScenarioWorker(QThread):
         report_path = None
         runner = None
         try:
-            log.info(f"[Slot-{self.slot_index+1}] Connecting to app '{self.title_re}'...")
-            connector = AppConnector()
-            if not connector.connect_to_app(title_re=self.title_re):
-                raise ConnectionError(f"Failed to connect to app: {self.title_re}")
+            # ✅ [수정] 새로운 연결을 만드는 대신, 전달받은 커넥터를 사용
+            if not self.app_connector or not self.app_connector.main_window:
+                raise ConnectionError("An existing application connection is required.")
             
-            runner = ScenarioRunner(connector)
+            log.info(f"[Slot-{self.slot_index+1}] Running scenario with existing connection.")
+            runner = ScenarioRunner(self.app_connector)
             runner.run_scenario(self.scenario_data, data_file_path=self.data_path)
             report_path = runner.generate_html_report()
             self.finished.emit(self.slot_index, "성공", report_path)
         except Exception as e:
             friendly_message = translate_exception(e)
-            log.error(f"[Slot-{self.slot_index+1}] Scenario failed with friendly message: {friendly_message}", exc_info=True)
+            log.error(f"[Slot-{self.slot_index+1}] Scenario failed: {friendly_message}", exc_info=True)
             if runner:
                 report_path = runner.generate_html_report()
             self.finished.emit(self.slot_index, f"실패: {friendly_message}", report_path)
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("AutoFlow Studio")
         self.setGeometry(100, 100, 1800, 1000)
+
+        # ✅ [추가] 메인 AppConnector 인스턴스를 저장할 변수
+        self.app_connector = AppConnector()
         
         self.connector_worker = None
         self.refresh_worker = None
@@ -301,7 +307,8 @@ class MainWindow(QMainWindow):
 
     def start_connector_worker(self, title_re, mode):
         self.connect_action.setEnabled(False)
-        self.connector_worker = ConnectorWorker(title_re=title_re, mode=mode)
+        # ✅ [수정] 메인 커넥터 인스턴스를 사용하여 연결
+        self.connector_worker = ConnectorWorker(self.app_connector, title_re=title_re, mode=mode)
         self.connector_worker.finished.connect(self.on_analysis_finished)
         self.connector_worker.start()
 
@@ -321,9 +328,9 @@ class MainWindow(QMainWindow):
         self.run_parallel_scenario(0, main_scenario_data, None)
 
     def run_parallel_scenario(self, slot_index, scenario_data, data_path):
-        target_title = self.target_app_input.currentText()
-        if not target_title:
-            QMessageBox.warning(self, "연결 오류", "병렬 실행을 위해 메인 툴바의 '대상 앱'을 먼저 지정해야 합니다.")
+        # ✅ [수정] 실행 시점의 target_title 대신, 이미 연결된 커넥터를 사용
+        if not self.app_connector or not self.app_connector.main_window:
+            QMessageBox.warning(self, "연결 오류", "시나리오를 실행하기 전에 먼저 '앱 연결'을 성공해야 합니다.")
             return
 
         if slot_index in self.running_workers:
@@ -333,7 +340,8 @@ class MainWindow(QMainWindow):
         slot_widget = self.parallel_runner_panel.slots[slot_index]
         slot_widget.update_status("실행 중...", "blue")
         
-        worker = ScenarioWorker(slot_index, target_title, scenario_data, data_path)
+        # ✅ [수정] Worker에게 target_title 대신 self.app_connector 인스턴스를 전달
+        worker = ScenarioWorker(slot_index, self.app_connector, scenario_data, data_path)
         worker.finished.connect(self.on_parallel_scenario_finished)
         self.running_workers[slot_index] = worker
         worker.start()
