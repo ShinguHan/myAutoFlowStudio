@@ -220,9 +220,31 @@ class MainWindow(QMainWindow):
         self.parallel_runner_panel.run_request_from_slot.connect(self.run_parallel_scenario)
         self.flow_editor.selectionChanged.connect(self.update_group_action_state)
         self.monitor_toggle_btn.clicked.connect(self.toggle_log_monitor)
+        # [✅ 추가] UI 탐색기의 선택이 변경될 때마다 FlowEditor로 신호를 보냅니다.
+        self.ui_tree_view.tree_widget.itemSelectionChanged.connect(self.on_ui_tree_selection_changed)
         
         # ✅ *** 새로고침 시그널 연결 ***
         self.ui_tree_view.refresh_request.connect(self.on_ui_tree_refresh_request)
+
+    def on_ui_tree_selection_changed(self):
+        """
+        [✅ 새로 추가된 함수]
+        UI 탐색기에서 선택된 노드 데이터를 FlowEditor로 전달합니다.
+        """
+        selected_data = self.ui_tree_view.get_selected_node_data()
+        self.flow_editor.update_context(selected_data)
+
+    def add_if_block_with_context(self):
+        """
+        [✅ 새로 추가된 함수]
+        IF 블록을 추가하기 전, UI 탐색기에서 선택된 요소가 있는지 확인하여
+        그 '문맥'을 FlowEditor로 전달합니다.
+        """
+        # UI 탐색기에서 현재 선택된 노드의 데이터를 가져옵니다.
+        selected_ui_node_data = self.ui_tree_view.get_selected_node_data()
+        
+        # FlowEditor의 add_if_block 함수를 호출하며, 선택된 노드 데이터를 전달합니다.
+        self.flow_editor.add_if_block(element_data=selected_ui_node_data)
 
     def populate_running_apps(self):
         log.info("Fetching list of running applications...")
