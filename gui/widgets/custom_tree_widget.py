@@ -10,7 +10,7 @@
 """
 import json
 from PyQt6.QtWidgets import QTreeWidget
-from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import pyqtSignal, Qt, QPoint
 
 class CustomTreeWidget(QTreeWidget):
     """
@@ -19,7 +19,7 @@ class CustomTreeWidget(QTreeWidget):
     """
     # 외부(UITreeView)에서 UI 요소가 드롭되었을 때,
     # 해당 요소의 속성(dict)을 전달하는 커스텀 시그널
-    element_dropped = pyqtSignal(dict)
+    element_dropped = pyqtSignal(dict, QPoint)
 
     def __init__(self, parent=None):
         """CustomTreeWidget 인스턴스를 초기화합니다."""
@@ -70,7 +70,9 @@ class CustomTreeWidget(QTreeWidget):
                  # ✅ 수정된 부분: .data()를 제거하여 QByteArray를 올바르게 디코딩합니다.
                 element_props = json.loads(json_bytes.decode('utf-8'))
 
-                self.element_dropped.emit(element_props)
+                # ✅ 시그널 발생 시, 드롭된 좌표(event.position())를 함께 전달
+                self.element_dropped.emit(element_props, event.position().toPoint())
+                
                 # 이벤트 처리가 완료되었음을 알립니다.
                 event.acceptProposedAction()
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
