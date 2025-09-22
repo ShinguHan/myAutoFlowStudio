@@ -80,6 +80,23 @@ class ScenarioRunner:
             self.results["summary"]["passed_steps"] = len([s for s in self.results["steps"] if s["status"] == "success"])
             self.results["summary"]["failed_steps"] = len([s for s in self.results["steps"] if s["status"] == "failure"])
 
+    def _record_skipped_steps(self, steps_to_skip, iteration_num):
+        """
+        [✅ 새로 추가된 헬퍼 함수]
+        건너뛴 스텝들을 'skipped' 상태로 리포트에 기록합니다.
+        """
+        for step in steps_to_skip:
+            self._record_step_result(step, time.time(), "skipped", iteration_num, "Condition not met")
+            # 중첩된 제어 블록이 있는 경우, 그 하위도 모두 skipped 처리
+            if step.get("type") == "control":
+                control_type = step.get("control_type")
+                if control_type in ["start_loop", "if_condition", "try_catch_start", "group"]:
+                    end_index = self._find_matching_end_for_skip(steps_to_skip, steps_to_skip.index(step))
+                    if end_index != -1:
+                        nested_steps = steps_to_skip[steps_to_skip.index(step)+1 : end_index]
+                        self._record_skipped_steps(nested_steps, iteration_num)
+
+
     def _execute_steps(self, steps, data_row=None, iteration_num=1):
         # ✅ *** 핵심 수정: 스텝 실행 전, 항상 메인 창에 포커스를 줍니다. ***
         log.debug("Setting focus to the main window before executing steps.")
@@ -89,6 +106,7 @@ class ScenarioRunner:
         while pc < len(steps):
             self._check_app_is_alive()
             step = steps[pc]
+            step_start_time = time.time() # 스텝 시작 시간 기록
             
             if step.get("type") == "action":
                 self._execute_action(step, data_row, iteration_num)
@@ -97,6 +115,10 @@ class ScenarioRunner:
 
             if step.get("type") == "control":
                 control_type = step.get("control_type")
+
+                # [✅ 수정] 제어 블록 자체를 리포트에 기록
+                self._record_step_result(step, step_start_time, "info", iteration_num)
+
 
                 if control_type == "start_loop":
                     end_loop_index = self._find_matching_end(steps, pc, "start_loop", "end_loop")
@@ -110,14 +132,23 @@ class ScenarioRunner:
                 elif control_type == "if_condition":
                     else_index, end_if_index = self._find_else_or_end_if(steps, pc)
                     condition_result = self._check_condition(step.get("condition", {}))
+                    
+                    if_body = steps[pc + 1 : (else_index if else_index != -1 else end_if_index)]
+                    else_body = steps[else_index + 1 : end_if_index] if else_index != -1 else []
+
                     if condition_result:
-                        if_body = steps[pc + 1 : (else_index if else_index != -1 else end_if_index)]
+                        log.info("IF condition is TRUE. Executing IF block.")
                         self._execute_steps(if_body, data_row, iteration_num)
-                    elif else_index != -1:
-                        else_body = steps[else_index + 1 : end_if_index]
-                        self._execute_steps(else_body, data_row, iteration_num)
+                        # [✅ 수정] ELSE 블록은 SKIPPED로 기록
+                        self._record_skipped_steps(else_body, iteration_num)
+                    else:
+                        log.info("IF condition is FALSE. Executing ELSE block.")
+                        # [✅ 수정] IF 블록은 SKIPPED로 기록
+                        self._record_skipped_steps(if_body, iteration_num)
+                        if else_index != -1:
+                            self._execute_steps(else_body, data_row, iteration_num)
+                    
                     pc = end_if_index + 1
-                    continue
 
                 elif control_type == "try_catch_start":
                     catch_index, end_try_index = self._find_catch_or_end_try(steps, pc)
