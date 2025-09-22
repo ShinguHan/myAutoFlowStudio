@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import ctypes
 
-# --- 환경 변수 설정 (QApplication 생성 전) ---
-os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
-os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
+
 # ---------------------------------------------
+
+# 강제로 COM 초기화 (STA 모드)
+ctypes.windll.ole32.OleInitialize(None)
 
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QFont
@@ -28,6 +30,10 @@ def main():
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
     )
+
+    # --- 환경 변수 설정 (QApplication 생성 전) ---
+    os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1" 
 
     # 3. PyQt 애플리케이션 인스턴스를 생성합니다.
     app = QApplication(sys.argv)
