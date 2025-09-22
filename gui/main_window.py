@@ -368,7 +368,10 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "저장 오류", "저장할 시나리오 내용이 없습니다.")
             return
 
-        file_path, _ = QFileDialog.getSaveFileName(self, "시나리오 저장", "./scenarios", "JSON Files (*.json)")
+        dialog = QFileDialog(self, "시나리오 저장", "./scenarios", "JSON Files (*.json)")
+        dialog.setOption(QFileDialog.Option.DontUseNativeDialog, True)
+        file_path, _ = dialog.getSaveFileName()
+
         if file_path:
             try:
                 with open(file_path, 'w', encoding='utf-8') as f:
@@ -379,8 +382,12 @@ class MainWindow(QMainWindow):
                 log.error(f"Failed to save scenario: {e}")
                 QMessageBox.critical(self, "저장 실패", f"파일 저장 중 오류가 발생했습니다:\n{e}")
 
-    def load_scenario(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "시나리오 불러오기", "./scenarios", "JSON Files (*.json)")
+    def load_scenario(self):      
+        dialog = QFileDialog(self, "시나리오 불러오기", "./scenarios", "JSON Files (*.json)")
+        dialog.setOption(QFileDialog.Option.DontUseNativeDialog, True)
+        file_path, _ = dialog.getOpenFileName()
+
+        # file_path, _ = QFileDialog.getOpenFileName(self, "시나리오 불러오기", "./scenarios", "JSON Files (*.json)")
         if file_path:
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
